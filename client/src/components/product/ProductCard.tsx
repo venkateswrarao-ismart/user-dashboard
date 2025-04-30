@@ -1,32 +1,34 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Product } from "@shared/schema";
+
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Link } from "wouter";
 
 interface ProductCardProps {
-  product: Product;
-  onAddToCart?: (productId: number) => void;
+  id: string;
+  name: string;
+  price: number;
+  imageUrl?: string;
+  description?: string;
 }
 
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export function ProductCard({ id, name, price, imageUrl, description }: ProductCardProps) {
   return (
-    <Card className="overflow-hidden">
-      <div className="aspect-square relative">
-        <img
-          src={product.imageUrl || 'https://via.placeholder.com/300'}
-          alt={product.name}
-          className="object-cover w-full h-full"
-        />
-      </div>
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-        <p className="text-gray-600 mb-4">${product.price}</p>
-        <Button 
-          onClick={() => onAddToCart?.(product.id)} 
-          className="w-full"
-        >
-          Add to Cart
-        </Button>
-      </CardContent>
-    </Card>
+    <Link href={`/products/${id}`}>
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <CardHeader>
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt={name}
+              className="w-full h-48 object-cover rounded-t-lg"
+            />
+          )}
+        </CardHeader>
+        <CardContent>
+          <h3 className="font-semibold text-lg">{name}</h3>
+          <p className="text-gray-600">{description}</p>
+          <p className="text-lg font-bold mt-2">${(price / 100).toFixed(2)}</p>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
