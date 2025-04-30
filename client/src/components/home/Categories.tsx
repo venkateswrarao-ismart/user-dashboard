@@ -34,6 +34,13 @@ const CategorySkeleton = () => (
 const Categories = () => {
   const { data: categories = [], isLoading, error } = useQuery({
     queryKey: ['/api/categories'],
+    queryFn: async () => {
+      const response = await fetch('/api/categories');
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      return response.json();
+    },
     staleTime: 1000 * 60 * 60, // 1 hour
   });
   

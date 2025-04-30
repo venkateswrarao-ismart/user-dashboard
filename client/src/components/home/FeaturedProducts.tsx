@@ -22,14 +22,14 @@ const FeaturedProducts = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { data, isLoading, error } = useQuery({
-    queryKey: ['external-products'],
+    queryKey: ['/api/products'],
     queryFn: async () => {
-      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      const response = await fetch('/api/products');
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
       const data = await response.json();
-      return data || [];
+      return data?.products || [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
