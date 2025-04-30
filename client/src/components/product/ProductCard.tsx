@@ -1,3 +1,4 @@
+
 import { Link } from "wouter";
 
 type ProductCardProps = {
@@ -9,7 +10,6 @@ type ProductCardProps = {
     image_url: string;
     brand?: string;
     category?: string;
-    image?: string; // Added image field
   };
 };
 
@@ -19,7 +19,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 cursor-pointer">
         <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg mb-4">
           <img 
-            src={product.image || product.image_url || 'https://via.placeholder.com/400'} 
+            src={product.image_url || 'https://via.placeholder.com/400'} 
             alt={product.name}
             className="w-full h-64 object-cover"
           />
@@ -40,7 +40,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
           <div className="text-lg font-bold text-primary mt-2">
-            ${product.price.toFixed(2)}
+            ₹{product.price.toFixed(2)}
           </div>
         </div>
       </div>
