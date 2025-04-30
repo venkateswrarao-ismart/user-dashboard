@@ -6,6 +6,8 @@ import { calculateDiscountPercentage } from "@/lib/utils";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
+import { Card, CardContent } from "@/components/ui/card";
+
 
 type Product = {
   id: string;
@@ -40,16 +42,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
-  
+
   // Calculate discount if selling_price is available and lower than regular price
   const discount = product.selling_price > 0 && product.selling_price < product.price
     ? calculateDiscountPercentage(product.selling_price, product.price)
     : 0;
-  
+
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     setIsLoading(true);
     try {
       await addItem(product.id, 1);
@@ -59,13 +61,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       setIsLoading(false);
     }
   };
-  
+
   const handleAddToWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     setIsWishlistLoading(true);
-    
+
     // Mock wishlist functionality
     setTimeout(() => {
       toast({
@@ -75,7 +77,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       setIsWishlistLoading(false);
     }, 500);
   };
-  
+
   const getStockStatus = () => {
     if (product.stock <= 0) {
       return { text: "Out of Stock", className: "bg-red-100 text-red-800" };
@@ -85,18 +87,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       return { text: "In Stock", className: "bg-green-100 text-green-800" };
     }
   };
-  
+
   const stockStatus = getStockStatus();
-  
+
   return (
     <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition h-full">
       <div className="relative">
         <Link href={`/products/${product.id}`}>
           <div className="block cursor-pointer">
             <div className="aspect-w-1 aspect-h-1 w-full bg-gray-200 relative h-56">
-              <img 
-                src={product.image_url} 
-                alt={product.name} 
+              <img
+                src={product.image_url}
+                alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -133,9 +135,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       <div className="p-4">
         <div className="flex items-center space-x-1 mb-2">
           {[1, 2, 3, 4, 5].map((star) => (
-            <Star 
-              key={star} 
-              className={`h-4 w-4 ${star <= 4 ? 'text-yellow-400 fill-current' : 'text-yellow-400'}`} 
+            <Star
+              key={star}
+              className={`h-4 w-4 ${star <= 4 ? 'text-yellow-400 fill-current' : 'text-yellow-400'}`}
             />
           ))}
           <span className="text-xs text-gray-500 ml-1">(42)</span>
@@ -174,6 +176,34 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </div>
     </div>
+  );
+};
+
+type ProductCardProps2 = {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  slug: string;
+};
+
+export const ProductCard2 = ({ id, name, price, imageUrl, slug }: ProductCardProps2) => {
+  return (
+    <Link href={`/products/${slug}`}>
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+        <CardContent className="p-4">
+          <div className="aspect-square overflow-hidden rounded-lg mb-4">
+            <img
+              src={imageUrl}
+              alt={name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <h3 className="font-medium text-gray-900 mb-1">{name}</h3>
+          <p className="text-primary font-medium">₹{price}</p>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 

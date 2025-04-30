@@ -1,10 +1,9 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
-import { ProductCard } from '@/components/product/ProductCard';
+import ProductCard from '@/components/product/ProductCard';
 import { cn } from '@/lib/utils';
 
 export default function ProductList() {
@@ -35,7 +34,7 @@ export default function ProductList() {
 
   const currentCategory = categories?.find(cat => cat.id === categoryId);
   const safeProducts = productsData || [];
-  
+
   return (
     <div className="container py-8">
       <Helmet>
