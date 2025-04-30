@@ -10,37 +10,26 @@ type Product = {
   name: string;
   description: string;
   price: number;
-  stock: number;
-  category: string;
   image_url: string;
-  created_at: string;
-  updated_at: string;
-  category_id: string;
-  approval_status: string;
-  rejection_reason: string | null;
-  submitted_at: string;
-  approved_at: string | null;
+  category: string;
   brand: string;
-  hsn_code: string;
-  vendor_id: string | null;
-  sub_category_id: string;
-  selling_price: number;
-  gst_percentage: number;
-  updated_by: string | null;
+  stock: number;
+  rating?: number;
+  created_at?: string;
 };
 
 const FeaturedProducts = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { data, isLoading, error } = useQuery({
-    queryKey: ['/api/products', { featured: true }],
+    queryKey: ['external-products'],
     queryFn: async () => {
-      const response = await fetch('/api/products?featured=true');
+      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
       const data = await response.json();
-      return data.products || [];
+      return data || [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
