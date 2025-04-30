@@ -45,10 +45,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const res = await fetch("/api/auth/session", {
         credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       
       if (!res.ok) {
         setUser(null);
+        setIsLoading(false);
         return;
       }
       

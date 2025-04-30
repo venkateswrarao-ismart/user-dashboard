@@ -1,77 +1,39 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'wouter';
-import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet';
-import { Button } from '@/components/ui/button';
-import ProductCard from '@/components/product/ProductCard';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import ProductCard from "@/components/product/ProductCard";
+import { Product } from "@shared/schema";
 
 export default function ProductList() {
-  const params = new URLSearchParams(window.location.search);
-  const categoryId = params.get('category');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const response = await fetch('/api/categories');
-      if (!response.ok) {
-        throw new Error('Failed to fetch categories');
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        if (!response.ok) throw new Error("Failed to fetch products");
+        const data = await response.json();
+        setProducts(data.products || []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
-      return response.json();
-    }
-  });
+    };
 
-  const { data: productsData, isLoading } = useQuery({
-    queryKey: ['products', categoryId],
-    queryFn: async () => {
-      const response = await fetch(`/api/products${categoryId ? `?categoryId=${categoryId}` : ''}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      return response.json();
-    }
-  });
+    fetchProducts();
+  }, []);
 
-  const currentCategory = categories?.find(cat => cat.id === categoryId);
-  const safeProducts = productsData || [];
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="container py-8">
-      <Helmet>
-        <title>Products {currentCategory ? `- ${currentCategory.name}` : ''}</title>
-      </Helmet>
-
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">
-            {currentCategory ? currentCategory.name : 'All Products'}
-          </h1>
-        </div>
-
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-[300px] bg-gray-100 animate-pulse rounded-lg" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {safeProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-
-        {!isLoading && safeProducts.length === 0 && (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold mb-4">No products found</h2>
-            <p className="text-gray-600 mb-8">
-              {currentCategory
-                ? `No products available in ${currentCategory.name}`
-                : 'No products available'}
-            </p>
-          </div>
-        )}
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">All Products</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
       </div>
     </div>
   );
