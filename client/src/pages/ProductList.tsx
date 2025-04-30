@@ -11,7 +11,8 @@ export function ProductList() {
       if (!res.ok) {
         throw new Error("Failed to fetch products");
       }
-      return res.json();
+      const data = await res.json();
+      return data.products || [];
     }
   });
 
@@ -27,13 +28,10 @@ export function ProductList() {
     return <div>Error loading products: {error.message}</div>;
   }
 
-  // Ensure products is an array
-  const products = Array.isArray(data) ? data : [];
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
+        {data?.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

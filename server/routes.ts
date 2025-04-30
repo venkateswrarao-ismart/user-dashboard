@@ -387,17 +387,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-      const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-      const featured = req.query.featured === "true";
-      const categoryId = req.query.categoryId as string;
-
-      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
-      if (!response.ok) {
-        throw new Error('Failed to fetch products from external API');
-      }
-      const products = await response.json();
-      res.json(products);
+      const products = [
+        {
+          id: "1",
+          name: "Product 1",
+          description: "Description for product 1",
+          price: 29.99,
+          image_url: "https://picsum.photos/400/300",
+          brand: "Brand A",
+          category: "Electronics"
+        },
+        {
+          id: "2",
+          name: "Product 2",
+          description: "Description for product 2",
+          price: 39.99,
+          image_url: "https://picsum.photos/400/300",
+          brand: "Brand B",
+          category: "Electronics"
+        }
+      ];
+      res.json({ products });
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ message: "Failed to retrieve products" });
