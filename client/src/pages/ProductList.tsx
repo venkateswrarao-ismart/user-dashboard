@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
@@ -24,18 +25,16 @@ export default function ProductList() {
   const { data: products, isLoading } = useQuery({
     queryKey: ['products', categoryId],
     queryFn: async () => {
-      const response = await fetch(`/api/products${categoryId ? `?categoryId=${categoryId}` : ''}`);
+      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
-      return response.json();
+      const data = await response.json();
+      return { products: data || [] };
     }
   });
 
-  const currentCategory = categories?.categories && Array.isArray(categories.categories) 
-    ? categories.categories.find(cat => cat.id === categoryId)
-    : null;
-
+  const currentCategory = categories?.find(cat => cat.id === categoryId);
   const safeProducts = products?.products || [];
 
   return (
