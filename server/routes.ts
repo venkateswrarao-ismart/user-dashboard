@@ -353,17 +353,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/products", async (req, res) => {
     try {
-      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
-      const products = await response.json();
-      res.json(products);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to retrieve products" });
-    }
-  });
-            "price": 2470,
-            "stock": 0,
-            "category": "Rice",
-            "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/624b6157-493b-45d4-907e-f6dc7f7556f4.png",
+      const products = {
+        products: [{
+          id: "395636ed-a460-45c8-b25e-83f8043359f2",
+          name: "Sri Anmol Kohenur STM JSR Rice",
+          description: "Sri Anmol kohernur ST JSR rice",
+          price: 2470,
+          stock: 0,
+          category: "Rice",
+          image_url: "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/624b6157-493b-45d4-907e-f6dc7f7556f4.png",
             "created_at": "2025-04-26T13:24:47.604886+00:00",
             "updated_at": "2025-04-28T14:15:17.305236+00:00",
             "category_id": "1a915b44-a7d7-472e-abae-90dd70ae3923",
