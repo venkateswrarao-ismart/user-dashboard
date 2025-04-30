@@ -17,7 +17,8 @@ export function ProductList() {
     fetch('/api/products')
       .then(response => response.json())
       .then(data => {
-        setProducts(Array.isArray(data) ? data : []);
+        const safeProducts = Array.isArray(data) ? data : [];
+        setProducts(safeProducts);
       })
       .catch(error => {
         console.error('Error fetching products:', error);
