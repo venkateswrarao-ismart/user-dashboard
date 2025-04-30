@@ -371,13 +371,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!products) {
         throw new Error("Failed to fetch category products");
       }
-      const data = await response.json();
 
-      if (!data) {
-        throw new Error("No data received from external API");
-      }
-
-      res.json({ products: data.products || [] });
+      res.json({ products: products || [] });
     } catch (error) {
       console.error("Error fetching category products:", error);
       res.status(500).json({ message: "Failed to retrieve products" });
@@ -396,6 +391,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ message: "Failed to retrieve products" });
+    }
+  });
+
+  app.get("/api/products/:productId", async (req, res) => {
+    try {
+      const productId = req.params.productId;
+      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products from external API');
+      }
+      const data = await response.json();
+      const product = data.products.find((p: any) => p.id === productId);
+      
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      
+      res.json(product);
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      res.status(500).json({ message: "Failed to retrieve product" });
     }
   });
 
