@@ -391,17 +391,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const featured = req.query.featured === "true";
       const categoryId = req.query.categoryId as string;
 
-      // Use storage instead of external API
-      let products = await storage.getAllProducts(limit);
-
-      // Filter by category if categoryId is provided
-      if (categoryId) {
-        products = products.filter(product => product.categoryId === parseInt(categoryId));
-      }
-
-      // Filter featured products if requested
+      let products;
       if (featured) {
-        products = products.filter(product => product.featured);
+        products = await storage.getFeaturedProducts(limit);
+      } else if (categoryId) {
+        products = await storage.getProductsByCategory(parseInt(categoryId), limit, offset);
+      } else {
+        products = await storage.getAllProducts(limit);
       }
 
       res.json({ products });
