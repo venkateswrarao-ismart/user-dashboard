@@ -390,21 +390,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const products = [
         {
           id: "1",
-          name: "Product 1",
-          description: "Description for product 1",
-          price: 29.99,
-          image_url: "https://picsum.photos/400/300",
-          brand: "Brand A",
+          name: "Smart Watch Pro",
+          description: "Advanced smartwatch with health tracking and notifications",
+          price: 199.99,
+          image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+          brand: "TechGear",
           category: "Electronics"
         },
         {
           id: "2",
-          name: "Product 2",
-          description: "Description for product 2",
-          price: 39.99,
-          image_url: "https://picsum.photos/400/300",
-          brand: "Brand B",
+          name: "Wireless Earbuds",
+          description: "Premium wireless earbuds with noise cancellation",
+          price: 149.99,
+          image_url: "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb",
+          brand: "AudioPro",
           category: "Electronics"
+        },
+        {
+          id: "3",
+          name: "Leather Backpack",
+          description: "Stylish and durable leather backpack for everyday use",
+          price: 89.99,
+          image_url: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3",
+          brand: "Urban",
+          category: "Accessories"
+        },
+        {
+          id: "4",
+          name: "Running Shoes",
+          description: "Comfortable running shoes with advanced cushioning",
+          price: 129.99,
+          image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+          brand: "SportFit",
+          category: "Sports"
         }
       ];
       res.json({ products });

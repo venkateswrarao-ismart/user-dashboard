@@ -3,16 +3,25 @@ import { useQuery } from "@tanstack/react-query";
 import { RefreshCw } from "lucide-react";
 import { ProductCard } from "@/components/product/ProductCard";
 
+type Product = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  brand: string;
+  category: string;
+};
+
 export function ProductList() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<{ products: Product[] }>({
     queryKey: ["/api/products"],
     queryFn: async () => {
       const res = await fetch("/api/products");
       if (!res.ok) {
         throw new Error("Failed to fetch products");
       }
-      const data = await res.json();
-      return data.products || [];
+      return res.json();
     }
   });
 
@@ -25,13 +34,18 @@ export function ProductList() {
   }
 
   if (error) {
-    return <div>Error loading products: {error.message}</div>;
+    return <div className="text-center text-red-500 mt-8">Error loading products: {error.message}</div>;
+  }
+
+  if (!data?.products?.length) {
+    return <div className="text-center mt-8">No products found</div>;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Our Products</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {data?.map((product) => (
+        {data.products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
