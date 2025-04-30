@@ -367,7 +367,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ? parseInt(req.query.offset as string)
         : 0;
 
-      const products = await storage.getProductsByCategory(parseInt(categoryId), limit, offset);
+      const products = await storage.getProductsByCategory(
+        parseInt(categoryId),
+        limit,
+        offset,
+      );
       if (!products) {
         throw new Error("Failed to fetch category products");
       }
@@ -382,9 +386,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
-      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      const response = await fetch(
+        "https://v0-next-js-and-supabase-app.vercel.app/api/products",
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch products from external API');
+        throw new Error("Failed to fetch products from external API");
       }
       const data = await response.json();
       res.json(data);
@@ -397,17 +403,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products/:productId", async (req, res) => {
     try {
       const productId = req.params.productId;
-      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      const response = await fetch(
+        "https://v0-next-js-and-supabase-app.vercel.app/api/products",
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch products from external API');
+        throw new Error("Failed to fetch products from external API");
       }
       const data = await response.json();
       const product = data.products.find((p: any) => p.id === productId);
-      
+
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
-      
+
       res.json(product);
     } catch (error) {
       console.error("Error fetching product:", error);
