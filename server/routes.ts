@@ -392,16 +392,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const featured = req.query.featured === "true";
       const categoryId = req.query.categoryId as string;
 
-      let products;
-      if (featured) {
-        products = await storage.getFeaturedProducts(limit);
-      } else if (categoryId) {
-        products = await storage.getProductsByCategory(parseInt(categoryId), limit, offset);
-      } else {
-        products = await storage.getAllProducts(limit);
+      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products from external API');
       }
-
-      res.json({ products });
+      const products = await response.json();
+      res.json(products);
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ message: "Failed to retrieve products" });

@@ -25,7 +25,7 @@ export default function ProductList() {
   const { data: productsData, isLoading } = useQuery({
     queryKey: ['products', categoryId],
     queryFn: async () => {
-      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      const response = await fetch(`/api/products${categoryId ? `?categoryId=${categoryId}` : ''}`);
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
