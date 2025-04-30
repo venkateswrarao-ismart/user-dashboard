@@ -1,32 +1,24 @@
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
 
-interface ProductCardProps {
-  id: string;
+interface Product {
+  id: number;
   name: string;
   price: number;
-  imageUrl?: string;
-  description?: string;
+  imageUrl: string;
+  description: string;
 }
 
-export function ProductCard({ id, name, price, imageUrl, description }: ProductCardProps) {
+export function ProductCard({ product }: { product: Product }) {
   return (
-    <Link href={`/products/${id}`}>
+    <Link href={`/products/${product.id}`}>
       <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-        <CardHeader>
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt={name}
-              className="w-full h-48 object-cover rounded-t-lg"
-            />
-          )}
-        </CardHeader>
-        <CardContent>
-          <h3 className="font-semibold text-lg">{name}</h3>
-          <p className="text-gray-600">{description}</p>
-          <p className="text-lg font-bold mt-2">${(price / 100).toFixed(2)}</p>
+        <CardContent className="p-4">
+          <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover rounded-md" />
+          <h3 className="mt-2 text-lg font-semibold">{product.name}</h3>
+          <p className="text-gray-600">${product.price}</p>
         </CardContent>
       </Card>
     </Link>
