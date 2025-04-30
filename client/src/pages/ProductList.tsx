@@ -8,9 +8,9 @@ type Product = {
   name: string;
   description: string;
   price: number;
-  image_url: string;
-  brand: string;
+  image: string;
   category: string;
+  brand?: string;
 };
 
 export function ProductList() {

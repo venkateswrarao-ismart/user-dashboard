@@ -387,45 +387,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
-      const products = [
-        {
-          id: "1",
-          name: "Smart Watch Pro",
-          description: "Advanced smartwatch with health tracking and notifications",
-          price: 199.99,
-          image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
-          brand: "TechGear",
-          category: "Electronics"
-        },
-        {
-          id: "2",
-          name: "Wireless Earbuds",
-          description: "Premium wireless earbuds with noise cancellation",
-          price: 149.99,
-          image_url: "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb",
-          brand: "AudioPro",
-          category: "Electronics"
-        },
-        {
-          id: "3",
-          name: "Leather Backpack",
-          description: "Stylish and durable leather backpack for everyday use",
-          price: 89.99,
-          image_url: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3",
-          brand: "Urban",
-          category: "Accessories"
-        },
-        {
-          id: "4",
-          name: "Running Shoes",
-          description: "Comfortable running shoes with advanced cushioning",
-          price: 129.99,
-          image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-          brand: "SportFit",
-          category: "Sports"
-        }
-      ];
-      res.json({ products });
+      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products from external API');
+      }
+      const data = await response.json();
+      res.json({ products: data || [] });
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ message: "Failed to retrieve products" });
