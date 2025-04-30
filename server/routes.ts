@@ -392,7 +392,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error('Failed to fetch products from external API');
       }
       const data = await response.json();
-      res.json({ products: data || [] });
+      res.json(data);
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ message: "Failed to retrieve products" });
