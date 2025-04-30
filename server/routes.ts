@@ -609,7 +609,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }]
       };
       
-      res.json(productsData.products);
+      res.json(products);
     } catch (error) {
       res.status(500).json({ message: "Failed to retrieve products" });
     }
