@@ -10,7 +10,7 @@ interface Product {
   description: string;
 }
 
-export function ProductList() {
+const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -36,4 +36,6 @@ export function ProductList() {
       </div>
     </div>
   );
-}
+};
+
+export default ProductList;
