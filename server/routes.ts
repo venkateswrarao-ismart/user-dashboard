@@ -386,31 +386,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
-      const limit = req.query.limit
-        ? parseInt(req.query.limit as string)
-        : undefined;
-      const offset = req.query.offset
-        ? parseInt(req.query.offset as string)
-        : 0;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
       const featured = req.query.featured === "true";
       const categoryId = req.query.categoryId as string;
 
-      const response = await fetch(
-        "https://v0-next-js-and-supabase-app.vercel.app/api/products",
-      );
-      const data = await response.json();
-
-      if (!data || !data.products) {
-        throw new Error("No data received from external API");
-      }
-
-      let products = data.products;
+      // Use storage instead of external API
+      let products = await storage.getAllProducts(limit);
 
       // Filter by category if categoryId is provided
       if (categoryId) {
-        products = products.filter(
-          (product) => product.category_id === categoryId,
-        );
+        products = products.filter(product => product.categoryId === parseInt(categoryId));
+      }
+
+      // Filter featured products if requested
+      if (featured) {
+        products = products.filter(product => product.featured);
       }
 
       res.json({ products });
