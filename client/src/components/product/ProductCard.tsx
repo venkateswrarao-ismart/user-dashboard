@@ -11,7 +11,7 @@ interface Product {
   description: string;
 }
 
-export function ProductCard({ product }: { product: Product }) {
+const ProductCard = ({ product }: { product: Product }) => {
   return (
     <Link href={`/products/${product.id}`}>
       <Card className="cursor-pointer hover:shadow-lg transition-shadow">
@@ -23,4 +23,6 @@ export function ProductCard({ product }: { product: Product }) {
       </Card>
     </Link>
   );
-}
+};
+
+export default ProductCard;
