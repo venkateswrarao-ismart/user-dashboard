@@ -360,9 +360,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to retrieve products" });
     }
   });
-            "id": "395636ed-a460-45c8-b25e-83f8043359f2",
-            "name": "Sri Anmol Kohenur STM JSR Rice",
-            "description": "Sri Anmol kohernur ST JSR rice",
             "price": 2470,
             "stock": 0,
             "category": "Rice",
