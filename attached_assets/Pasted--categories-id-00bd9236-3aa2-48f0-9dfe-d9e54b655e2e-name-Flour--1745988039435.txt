@@ -1,0 +1,190 @@
+{
+    "categories": [{
+        "id": "00bd9236-3aa2-48f0-9dfe-d9e54b655e2e",
+        "name": "Flour",
+        "description": "",
+        "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/cqvqgxswc9v_1744960850887.jpg",
+        "parent_id": null,
+        "is_active": true,
+        "created_at": "2025-04-12T06:06:00.934002+00:00",
+        "updated_at": "2025-04-18T07:20:59.454884+00:00",
+        "subcategories": [{
+            "id": "6f2571ab-3b72-4734-8896-d485ab86d6ae",
+            "name": "wheat",
+            "image_url": null
+        }, {
+            "id": "e50ffff9-a614-45ac-8168-cc981677416e",
+            "name": "Atta",
+            "image_url": null
+        }, {
+            "id": "2b82050e-2094-4d76-adf9-27e2bcdb5472",
+            "name": "Maida",
+            "image_url": null
+        }, {
+            "id": "b6436c42-c240-44aa-a341-92a3757fb8a5",
+            "name": "Besan",
+            "image_url": null
+        }, {
+            "id": "6011cd90-6606-4c99-9902-25ac65cb8258",
+            "name": "Idly Rava",
+            "image_url": null
+        }]
+    }, {
+        "id": "9f9c1f99-7a54-4cb7-8dcc-03be8ab89599",
+        "name": "Ground Nuts",
+        "description": "Ground Nuts",
+        "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/ls3qqenmds_1744960880045.jpg",
+        "parent_id": null,
+        "is_active": true,
+        "created_at": "2025-04-12T06:14:50.168145+00:00",
+        "updated_at": "2025-04-18T07:21:23.877096+00:00",
+        "subcategories": [{
+            "id": "402eada2-ddf1-408e-ac8f-c3013b24c774",
+            "name": "palli",
+            "image_url": null
+        }, {
+            "id": "4d17f3eb-b093-464f-92b3-047901c73cd0",
+            "name": "Palli",
+            "image_url": null
+        }]
+    }, {
+        "id": "604baf0b-b583-4ae7-9567-f7b53f924d89",
+        "name": "Oils & Ghee",
+        "description": "Oil's & Ghee",
+        "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/pnjm0s54ia_1744002316449.jpg",
+        "parent_id": null,
+        "is_active": true,
+        "created_at": "2025-04-05T12:11:29.440093+00:00",
+        "updated_at": "2025-04-29T10:49:14.641566+00:00",
+        "subcategories": [{
+            "id": "1caccf47-3c83-4189-b76c-bcce6f787f2d",
+            "name": "Freedom Oil",
+            "image_url": null
+        }, {
+            "id": "55d4141e-f43c-4517-8a36-1ac530beb76f",
+            "name": "Saffola",
+            "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/l4ii4w9kkk_1744111856044.png"
+        }, {
+            "id": "e8cccd3e-3cb8-4158-a3b3-effc76f28671",
+            "name": "Deepam oil",
+            "image_url": null
+        }, {
+            "id": "b839ac8b-dd38-4d10-8eec-bf606032185b",
+            "name": "Palm oil",
+            "image_url": null
+        }, {
+            "id": "1e3d5fe5-f24c-4d4e-930c-24dea401a3fa",
+            "name": "Ghee",
+            "image_url": null
+        }, {
+            "id": "c1cf9705-aaf9-45f7-90e9-ef066e45be37",
+            "name": "Groundnut oil",
+            "image_url": null
+        }]
+    }, {
+        "id": "86613b89-fdad-4231-a444-308afb945283",
+        "name": "Pulses",
+        "description": "They provide a significant amount of dietary fiber, promoting digestive health and helping regulate blood sugar.",
+        "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/7191a19v20s_1744003097018.jpeg",
+        "parent_id": null,
+        "is_active": true,
+        "created_at": "2025-04-05T12:31:25.655456+00:00",
+        "updated_at": "2025-04-07T05:18:21.196938+00:00",
+        "subcategories": [{
+            "id": "22fe2137-cbe8-40c4-b2f0-0f439927bad0",
+            "name": "Urad dal",
+            "image_url": null
+        }, {
+            "id": "8f3a5534-26cb-411d-9736-593042e1ee00",
+            "name": "Toor Dal",
+            "image_url": null
+        }, {
+            "id": "ceedf2b6-6ae0-4e03-9596-ec99707c222f",
+            "name": "toor dal",
+            "image_url": null
+        }, {
+            "id": "db49dc0a-a281-4ec5-8ac7-227eda4bc89a",
+            "name": "Channa Dal",
+            "image_url": null
+        }, {
+            "id": "3e528435-35e0-4a2f-8196-ead32e276c0f",
+            "name": "Moong Dal",
+            "image_url": null
+        }, {
+            "id": "578fe4f7-6309-4d24-86d6-7933b92d4382",
+            "name": "Masoor Dal",
+            "image_url": null
+        }, {
+            "id": "9df1e52c-6d44-4006-875c-eb373e7036d8",
+            "name": "Phutana ",
+            "image_url": null
+        }, {
+            "id": "57705508-7e54-4372-ade9-62bdc0479f3d",
+            "name": "phalli",
+            "image_url": null
+        }, {
+            "id": "ef963e36-1c7a-49ff-9a98-aeb89c01be00",
+            "name": " Gundu ",
+            "image_url": null
+        }, {
+            "id": "3040b62b-801a-46de-a349-3ecaffb97609",
+            "name": "Wheat",
+            "image_url": null
+        }]
+    }, {
+        "id": "1a915b44-a7d7-472e-abae-90dd70ae3923",
+        "name": "Rice",
+        "description": "Each type of rice offers unique flavors, textures, and cooking properties, allowing you to choose the perfect variety for your dishes!",
+        "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/18626gx2z3y_1744003292166.jpeg",
+        "parent_id": null,
+        "is_active": true,
+        "created_at": "2025-04-05T12:15:10.696512+00:00",
+        "updated_at": "2025-04-07T05:21:40.292472+00:00",
+        "subcategories": [{
+            "id": "1c2db71e-ab01-4a32-953d-a2d26e589c69",
+            "name": "Basmati",
+            "image_url": null
+        }, {
+            "id": "fa2e1983-591e-4c0c-aece-d0c51f1e891c",
+            "name": "sona masuri",
+            "image_url": null
+        }, {
+            "id": "c1f7cd79-3ee1-439c-8a4e-bb6eeba140d2",
+            "name": "HMT Rice",
+            "image_url": null
+        }, {
+            "id": "6f3d55f5-b640-4aad-97e7-2e618ec7b3c1",
+            "name": "Raw Rice",
+            "image_url": null
+        }, {
+            "id": "31b4a468-d8b0-480c-a510-3886d643d27b",
+            "name": "Kolam steam",
+            "image_url": null
+        }, {
+            "id": "8687d034-2e09-46e1-b4c2-4375bc2d4bbe",
+            "name": "Broken RIce",
+            "image_url": null
+        }]
+    }, {
+        "id": "ed18ccf0-16f5-4932-baa0-0bcc4a9d9788",
+        "name": "Sugar & Salt",
+        "description": "Sugar",
+        "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/0e5f0np7k54a_1743946008909.webp",
+        "parent_id": null,
+        "is_active": true,
+        "created_at": "2025-04-05T14:20:45.939243+00:00",
+        "updated_at": "2025-04-25T13:29:37.999022+00:00",
+        "subcategories": [{
+            "id": "e77e33ed-850f-4522-83a6-a28e505d434f",
+            "name": "Sugar",
+            "image_url": "https://sqpgtmpbfmtaivbfsjuy.supabase.co/storage/v1/object/public/productsimages/categories/7zr9ola5mqq_1743946132052.jpg"
+        }, {
+            "id": "179bc186-4016-430a-8047-861992498572",
+            "name": "Salt",
+            "image_url": null
+        }]
+    }],
+    "count": null,
+    "limit": 100,
+    "offset": 0
+}
