@@ -35,7 +35,7 @@ type ProductCardProps = {
   product: Product;
 };
 
-const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product }: ProductCardProps) => {
   const { addItem } = useCart();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);

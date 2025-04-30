@@ -32,8 +32,8 @@ export default function ProductList() {
     }
   });
 
-  const currentCategory = categories && Array.isArray(categories) 
-    ? categories.find(cat => cat.id === categoryId)
+  const currentCategory = categories?.categories && Array.isArray(categories.categories) 
+    ? categories.categories.find(cat => cat.id === categoryId)
     : null;
 
   const safeProducts = products?.products || [];
