@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { RefreshCw } from "lucide-react";
 import { ProductCard } from "@/components/product/ProductCard";
 
-export default function ProductList() {
-  const { data: response, isLoading, error } = useQuery({
+export function ProductList() {
+  const { data, isLoading, error } = useQuery({
     queryKey: ["/api/products"],
     queryFn: async () => {
       const res = await fetch("/api/products");
@@ -27,8 +27,8 @@ export default function ProductList() {
     return <div>Error loading products: {error.message}</div>;
   }
 
-  // Ensure products is an array before mapping
-  const products = Array.isArray(response?.products) ? response.products : [];
+  // Ensure products is an array
+  const products = Array.isArray(data) ? data : [];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -40,3 +40,5 @@ export default function ProductList() {
     </div>
   );
 }
+
+export default ProductList;
