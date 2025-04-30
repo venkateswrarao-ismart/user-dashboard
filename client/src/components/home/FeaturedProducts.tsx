@@ -1,7 +1,9 @@
 import { useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import ProductCard from "@/components/product/ProductCard";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type Product = {
   id: string;
@@ -86,15 +88,63 @@ const FeaturedProducts = () => {
         ) : (
           <div 
             ref={containerRef}
-            className="flex overflow-x-auto space-x-6 pb-4 hide-scrollbar snap-x"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {Array.isArray(products) && products.map((product: Product) => (
-              <div 
-                key={product.id} 
-                className="flex-none w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 snap-start"
-              >
-                <ProductCard product={product} />
-              </div>
+              <Link key={product.id} href={`/product/${product.id}`}>
+                <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 cursor-pointer">
+                  <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg mb-4">
+                    <img 
+                      src={product.image_url || 'https://via.placeholder.com/400'} 
+                      alt={product.name}
+                      className="w-full h-64 object-cover"
+                    />
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
+                  
+                  <div className="flex items-center mb-2">
+                    <div className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star 
+                          key={star} 
+                          className={`h-4 w-4 ${star <= 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-500 ml-2">(42 reviews)</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      {product.selling_price && product.selling_price < product.price ? (
+                        <>
+                          <span className="text-xl font-bold text-gray-900">₹{product.selling_price}</span>
+                          <span className="text-sm text-gray-500 line-through">₹{product.price}</span>
+                          <Badge className="bg-red-500">
+                            {Math.round(((product.price - product.selling_price) / product.price) * 100)}% OFF
+                          </Badge>
+                        </>
+                      ) : (
+                        <span className="text-xl font-bold text-gray-900">₹{product.price}</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4">
+                    <div className="text-sm text-gray-600">
+                      <span className="font-medium">Brand:</span> {product.brand}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <span className="font-medium">Category:</span> {product.category}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <span className="font-medium">Stock:</span> {product.stock} units
+                    </div>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         )}
