@@ -22,21 +22,20 @@ export default function ProductList() {
     }
   });
 
-  const { data: products, isLoading } = useQuery({
+  const { data: productsData, isLoading } = useQuery({
     queryKey: ['products', categoryId],
     queryFn: async () => {
       const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
-      const data = await response.json();
-      return { products: data || [] };
+      return response.json();
     }
   });
 
   const currentCategory = categories?.find(cat => cat.id === categoryId);
-  const safeProducts = products?.products || [];
-
+  const safeProducts = productsData || [];
+  
   return (
     <div className="container py-8">
       <Helmet>
