@@ -332,7 +332,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Category routes
   app.get("/api/categories", async (req, res) => {
     try {
-      const categories = await storage.getAllCategories();
+      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/categories');
+      const categories = await response.json();
       res.json(categories);
     } catch (error) {
       res.status(500).json({ message: "Failed to retrieve categories" });
@@ -341,15 +342,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/categories/:categoryId/products", async (req, res) => {
     try {
-      // Using category ID (UUID) to match categories
       const categoryId = req.params.categoryId;
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-      const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-      
-      // Get products that match the category ID
-      // For now, we'll return the same products and filter by category_id
-      const productsData = {
-        "products": [{
+      const response = await fetch(`https://v0-next-js-and-supabase-app.vercel.app/api/categories/${categoryId}/products`);
+      const products = await response.json();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve products" });
+    }
+  });
+
+  app.get("/api/products", async (req, res) => {
+    try {
+      const response = await fetch('https://v0-next-js-and-supabase-app.vercel.app/api/products');
+      const products = await response.json();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve products" });
+    }
+  });
             "id": "395636ed-a460-45c8-b25e-83f8043359f2",
             "name": "Sri Anmol Kohenur STM JSR Rice",
             "description": "Sri Anmol kohernur ST JSR rice",
