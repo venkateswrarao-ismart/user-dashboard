@@ -1,4 +1,4 @@
-import type { Express, Request, Response, NextFunction } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
@@ -348,7 +348,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get products that match the category ID
       // For now, we'll return the same products and filter by category_id
-      const products = [{
+      const productsData = {
+        "products": [{
             "id": "395636ed-a460-45c8-b25e-83f8043359f2",
             "name": "Sri Anmol Kohenur STM JSR Rice",
             "description": "Sri Anmol kohernur ST JSR rice",
@@ -458,10 +459,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "selling_price": 2319.99,
             "gst_percentage": 0,
             "updated_by": null
-        }];
+        }]
+      };
       
       // Filter the products by the exact category_id match
-      const filteredProducts = products.filter(p => 
+      const filteredProducts = productsData.products.filter(p => 
         p.category_id === categoryId || 
         p.sub_category_id === categoryId
       );
@@ -472,7 +474,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // If no products match the category ID, return all products
-      res.json(products);
+      res.json(productsData.products);
     } catch (error) {
       res.status(500).json({ message: "Failed to retrieve products" });
     }
@@ -485,8 +487,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
       const featured = req.query.featured === "true";
       
-      // Using the sample data from attached file - returning array directly
-      const products = [{
+      // Using the sample data from attached file
+      const productsData = {
+        "products": [{
             "id": "395636ed-a460-45c8-b25e-83f8043359f2",
             "name": "Sri Anmol Kohenur STM JSR Rice",
             "description": "Sri Anmol kohernur ST JSR rice",
@@ -596,11 +599,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "selling_price": 2319.99,
             "gst_percentage": 0,
             "updated_by": null
-        }];
+        }]
+      };
       
-      res.json(products);
+      res.json(productsData.products);
     } catch (error) {
       res.status(500).json({ message: "Failed to retrieve products" });
+    }
+  });
+
+  // Banner routes
+  app.get("/api/banner", async (req, res) => {
+    try {
+      const banners = await storage.getActiveBanners();
+      res.json(banners);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve banners" });
+    }
+  });
+  
+  // Vendor routes
+  app.get("/api/vendors", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+      const vendors = await storage.getAllVendorProfiles(limit, offset);
+      res.json(vendors);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve vendors" });
     }
   });
 
@@ -634,7 +660,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get product details for each item
       const itemsWithDetails = await Promise.all(
         cartItems.map(async (item) => {
-          const product = await storage.getProduct(Number(item.productId));
+          const product = await storage.getProduct(item.productId);
           return {
             ...item,
             product: product || { name: "Unknown Product" }
@@ -664,6 +690,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!cart) {
         // Try to find cart by session ID
         cart = await storage.getCartBySessionId(sessionId);
+        
+        // If cart exists but user is now logged in, update the user ID
+        if (cart && req.session.user) {
+          cart = await storage.updateCart(cart.id, { userId: req.session.user.id });
+        }
       }
       
       if (!cart) {
@@ -681,7 +712,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if product exists
-      const product = await storage.getProduct(Number(productId));
+      const product = await storage.getProduct(productId);
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
@@ -699,7 +730,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           cartId: cart.id,
           productId,
           quantity,
-          price: product.price.toString()
+          price: Number(product.price)
         });
       }
       
@@ -710,7 +741,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get product details for each item
       const itemsWithDetails = await Promise.all(
         updatedItems.map(async (item) => {
-          const itemProduct = await storage.getProduct(Number(item.productId));
+          const itemProduct = await storage.getProduct(item.productId);
           return {
             ...item,
             product: itemProduct || { name: "Unknown Product" }
@@ -763,7 +794,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get product details for each item
       const itemsWithDetails = await Promise.all(
         updatedItems.map(async (i) => {
-          const product = await storage.getProduct(Number(i.productId));
+          const product = await storage.getProduct(i.productId);
           return {
             ...i,
             product: product || { name: "Unknown Product" }
@@ -780,6 +811,248 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const server = createServer(app);
-  return server;
+  // Order routes
+  app.get("/api/orders", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.session.user!.id;
+      
+      // Check if user is a vendor
+      if (req.session.user!.isVendor) {
+        const vendorProfile = await storage.getVendorProfileByUserId(userId);
+        if (vendorProfile) {
+          const vendorOrders = await storage.getOrdersByVendorId(vendorProfile.id);
+          return res.json(vendorOrders);
+        }
+      }
+      
+      // Regular user orders
+      const orders = await storage.getOrdersByUserId(userId);
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve orders" });
+    }
+  });
+
+  app.get("/api/orders/:orderId", isAuthenticated, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.orderId);
+      const userId = req.session.user!.id;
+      
+      const order = await storage.getOrder(orderId);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      // Check if user owns this order or is a vendor for this order
+      if (order.userId !== userId) {
+        // Check if user is a vendor for this order
+        if (req.session.user!.isVendor) {
+          const vendorProfile = await storage.getVendorProfileByUserId(userId);
+          if (vendorProfile) {
+            const orderItems = await storage.getOrderItems(orderId);
+            const hasVendorItems = orderItems.some(item => item.vendorId === vendorProfile.id);
+            
+            if (!hasVendorItems) {
+              return res.status(403).json({ message: "Forbidden" });
+            }
+          } else {
+            return res.status(403).json({ message: "Forbidden" });
+          }
+        } else {
+          return res.status(403).json({ message: "Forbidden" });
+        }
+      }
+      
+      // Get order items with product details
+      const orderItems = await storage.getOrderItems(orderId);
+      const itemsWithDetails = await Promise.all(
+        orderItems.map(async (item) => {
+          const product = await storage.getProduct(item.productId);
+          const vendor = product ? await storage.getVendorProfile(product.vendorId) : null;
+          
+          return {
+            ...item,
+            product: product || { name: "Unknown Product" },
+            vendor: vendor || { businessName: "Unknown Vendor" }
+          };
+        })
+      );
+      
+      // Get shipping address
+      const shippingAddress = await storage.getAddress(order.shippingAddressId);
+      
+      res.json({
+        ...order,
+        items: itemsWithDetails,
+        shippingAddress
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve order" });
+    }
+  });
+
+  app.get("/api/users/:userId/orders", isAuthenticated, async (req, res) => {
+    try {
+      const requestedUserId = parseInt(req.params.userId);
+      const userId = req.session.user!.id;
+      
+      // Only allow users to see their own orders
+      if (requestedUserId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const orders = await storage.getOrdersByUserId(requestedUserId);
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve orders" });
+    }
+  });
+
+  app.post("/api/orders", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.session.user!.id;
+      
+      const { shippingAddressId, paymentMethod } = req.body;
+      
+      if (!shippingAddressId || !paymentMethod) {
+        return res.status(400).json({ message: "Shipping address and payment method are required" });
+      }
+      
+      // Get user's cart
+      const cart = await storage.getCartByUserId(userId);
+      if (!cart) {
+        return res.status(404).json({ message: "Cart not found" });
+      }
+      
+      // Get cart items
+      const cartItems = await storage.getCartItems(cart.id);
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+      
+      // Create order
+      const order = await storage.createOrder({
+        userId,
+        orderNumber: `ORD-${Date.now()}`,
+        status: "pending",
+        total: Number(cart.total),
+        shippingAddressId,
+        paymentMethod,
+        paymentStatus: paymentMethod === "cash-on-delivery" ? "pending" : "paid"
+      });
+      
+      // Create order items
+      for (const item of cartItems) {
+        const product = await storage.getProduct(item.productId);
+        if (!product) continue;
+        
+        await storage.createOrderItem({
+          orderId: order.id,
+          productId: item.productId,
+          quantity: item.quantity,
+          price: Number(item.price),
+          total: Number(item.price) * item.quantity,
+          vendorId: product.vendorId
+        });
+        
+        // Update product stock
+        await storage.updateProduct(product.id, {
+          stock: product.stock - item.quantity
+        });
+      }
+      
+      // Clear cart
+      await storage.clearCartItems(cart.id);
+      await storage.deleteCart(cart.id);
+      
+      res.status(201).json(order);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create order" });
+    }
+  });
+
+  // Payment method routes
+  app.get("/api/payment-methods/cash-on-delivery", (req, res) => {
+    res.json({
+      id: "cash-on-delivery",
+      name: "Cash on Delivery",
+      description: "Pay when you receive your order",
+      enabled: true
+    });
+  });
+
+  // Vendor routes
+  app.post("/api/shop-owner-registrations", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.session.user!.id;
+      
+      // Check if user is already a vendor
+      if (req.session.user!.isVendor) {
+        return res.status(409).json({ message: "User is already a vendor" });
+      }
+      
+      // Check if vendor profile already exists
+      const existingProfile = await storage.getVendorProfileByUserId(userId);
+      if (existingProfile) {
+        return res.status(409).json({ message: "Vendor profile already exists" });
+      }
+      
+      // Update user to be a vendor
+      await storage.updateUser(userId, { isVendor: true });
+      
+      // Create vendor profile
+      const vendorProfile = await storage.createVendorProfile({
+        ...req.body,
+        userId,
+        status: "pending" // Requires approval in a real system
+      });
+      
+      // Update session
+      req.session.user = {
+        ...req.session.user!,
+        isVendor: true
+      };
+      
+      res.status(201).json(vendorProfile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to register as vendor" });
+    }
+  });
+
+  app.post("/api/owner-bank-accounts", isAuthenticated, isVendor, async (req, res) => {
+    try {
+      const userId = req.session.user!.id;
+      
+      // Get vendor profile
+      const vendorProfile = await storage.getVendorProfileByUserId(userId);
+      if (!vendorProfile) {
+        return res.status(404).json({ message: "Vendor profile not found" });
+      }
+      
+      // Check if bank account already exists
+      const existingAccount = await storage.getVendorBankAccount(vendorProfile.id);
+      if (existingAccount) {
+        return res.status(409).json({ message: "Bank account already exists" });
+      }
+      
+      // Create bank account
+      const bankAccount = await storage.createVendorBankAccount({
+        ...req.body,
+        vendorId: vendorProfile.id
+      });
+      
+      res.status(201).json(bankAccount);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create bank account" });
+    }
+  });
+
+  const httpServer = createServer(app);
+  return httpServer;
 }

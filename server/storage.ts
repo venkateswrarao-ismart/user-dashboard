@@ -653,16 +653,16 @@ export class MemStorage implements IStorage {
     return allProfiles;
   }
   
-  async getFeaturedVendors(limit?: number): Promise<VendorProfile[]> {
-    const allVendors = Array.from(this.vendorProfiles.values())
-      .filter(profile => profile.status === "approved")
-      .sort((a, b) => Number(b.averageRating) - Number(a.averageRating));
+  // async getFeaturedVendors(limit?: number): Promise<VendorProfile[]> {
+  //   const allVendors = Array.from(this.vendorProfiles.values())
+  //     .filter(profile => profile.status === "approved")
+  //     .sort((a, b) => Number(b.averageRating) - Number(a.averageRating));
     
-    if (limit) {
-      return allVendors.slice(0, limit);
-    }
-    return allVendors;
-  }
+  //   if (limit) {
+  //     return allVendors.slice(0, limit);
+  //   }
+  //   return allVendors;
+  // }
   
   async createVendorProfile(vendorProfile: InsertVendorProfile): Promise<VendorProfile> {
     const id = this.vendorProfileId++;

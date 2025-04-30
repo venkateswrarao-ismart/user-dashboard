@@ -1,7 +1,7 @@
-import HeroBanner from "@/components/home/HeroBanner";
 import Categories from "@/components/home/Categories";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
-import FeaturedVendors from "@/components/home/FeaturedVendors";
+import HeroBanner from "@/components/home/HeroBanner";
+// import FeaturedVendors from "@/components/home/FeaturedVendors";
 import VendorRegistrationCTA from "@/components/home/VendorRegistrationCTA";
 import { Helmet } from "react-helmet";
 
@@ -16,7 +16,7 @@ const Home = () => {
       <HeroBanner />
       <Categories />
       <FeaturedProducts />
-      <FeaturedVendors />
+      {/* <FeaturedVendors /> */}
       <VendorRegistrationCTA />
     </>
   );

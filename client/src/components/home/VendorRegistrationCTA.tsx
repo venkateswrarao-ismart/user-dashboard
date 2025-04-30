@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import VendorRegisterModal from "@/components/auth/VendorRegisterModal";
+import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
-import VendorRegisterModal from "@/components/auth/VendorRegisterModal";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckCircle } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const vendorFormSchema = z.object({
   businessName: z.string().min(2, "Business name is required"),
@@ -100,12 +100,12 @@ const VendorRegistrationCTA = () => {
                 <span>Comprehensive seller dashboard</span>
               </li>
             </ul>
-            <Button 
+            {/* <Button 
               className="inline-block bg-white text-primary hover:bg-gray-100 transition px-8 py-6 rounded-lg font-medium text-lg"
               onClick={handleLoginThenRegister}
             >
               Become a Vendor
-            </Button>
+            </Button> */}
           </div>
           <div className="md:w-5/12">
             <div className="bg-white rounded-lg shadow-lg p-6">

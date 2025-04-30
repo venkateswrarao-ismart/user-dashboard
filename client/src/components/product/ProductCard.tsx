@@ -1,11 +1,11 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/hooks/useCart";
+import { calculateDiscountPercentage } from "@/lib/utils";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
-import { Star, ShoppingCart, Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useCart } from "@/hooks/useCart";
-import { formatCurrency, calculateDiscountPercentage } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
 
 type Product = {
   id: string;
@@ -124,11 +124,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <span className="sr-only">Add to cart</span>
           </Button>
         </div>
-        {discount > 0 && (
+        {/* {discount > 0 && (
           <div className="absolute top-2 left-2">
             <Badge className="bg-red-500 text-white block">-{discount}%</Badge>
           </div>
-        )}
+        )} */}
       </div>
       <div className="p-4">
         <div className="flex items-center space-x-1 mb-2">

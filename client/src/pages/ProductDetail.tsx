@@ -1,21 +1,7 @@
-import { useState } from "react";
-import { useParams, Link, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { Helmet } from "react-helmet";
-import { 
-  ChevronRight, 
-  Minus, 
-  Plus, 
-  ShoppingCart, 
-  Heart, 
-  Share2, 
-  Star, 
-  Check, 
-  Truck, 
-  RefreshCw, 
-  ShieldCheck 
-} from "lucide-react";
+import ProductCard from "@/components/product/ProductCard";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Tabs,
@@ -23,12 +9,26 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useCart } from "@/hooks/useCart";
 import { useToast } from "@/hooks/use-toast";
-import { formatCurrency, calculateDiscountPercentage } from "@/lib/utils";
-import ProductCard from "@/components/product/ProductCard";
+import { useCart } from "@/hooks/useCart";
+import { calculateDiscountPercentage } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Check,
+  ChevronRight,
+  Heart,
+  Minus,
+  Plus,
+  RefreshCw,
+  Share2,
+  ShieldCheck,
+  ShoppingCart,
+  Star,
+  Truck
+} from "lucide-react";
+import { useState } from "react";
+import { Helmet } from "react-helmet";
+import { Link, useLocation, useParams } from "wouter";
 
 const ProductDetail = () => {
   const { slug: productId } = useParams();
@@ -149,35 +149,111 @@ const ProductDetail = () => {
     ? calculateDiscountPercentage(product.price, product.compareAtPrice) 
     : 0;
   
-  const handleQuantityChange = (value: string) => {
-    const newQuantity = parseInt(value);
-    if (!isNaN(newQuantity) && newQuantity > 0 && newQuantity <= product.stock) {
-      setQuantity(newQuantity);
-    }
-  };
+    const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      const newQuantity = parseInt(value, 10);
+      
+      if (!isNaN(newQuantity)) {
+        setQuantity(Math.max(1, Math.min(newQuantity, product.stock)));
+      } else if (value === '') {
+        setQuantity(1);
+      }
+    };
+    
+    const handleQuantityBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value === '') {
+        setQuantity(1);
+        return;
+      }
+      
+      const newQuantity = parseInt(value, 10);
+      if (isNaN(newQuantity)) {
+        setQuantity(1);
+      } else {
+        setQuantity(Math.max(1, Math.min(newQuantity, product.stock)));
+      }
+    };
+    
+    const incrementQuantity = () => {
+      if (quantity < product.stock) {
+        setQuantity(prev => prev + 1);
+      }
+    };
+    
+    const decrementQuantity = () => {
+      if (quantity > 1) {
+        setQuantity(prev => prev - 1);
+      }
+    };
+    
+    
   
-  const incrementQuantity = () => {
-    if (quantity < product.stock) {
-      setQuantity(quantity + 1);
-    }
-  };
-  
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-  
-  const handleAddToCart = async () => {
-    setIsAddingToCart(true);
-    try {
-      await addItem(product.id, quantity);
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-    } finally {
-      setIsAddingToCart(false);
-    }
-  };
+    const handleAddToCart = async () => {
+      setIsAddingToCart(true);
+      
+      try {
+        // First verify network connectivity
+        if (!navigator.onLine) {
+          throw new Error("You appear to be offline. Please check your connection.");
+        }
+    
+        // Try fetching product with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+        
+        const retryFetch = async (url: string, options = {}, retries = 3) => {
+          try {
+            return await fetch(url, options);
+          } catch (err) {
+            if (retries <= 0) throw err;
+            await new Promise(res => setTimeout(res, 1000));
+            return retryFetch(url, options, retries - 1);
+          }
+        };
+        
+        const verifyRes = await fetch(`/api/products/${product.id}`, {
+          signal: controller.signal
+        }).finally(() => clearTimeout(timeoutId));
+    
+        if (!verifyRes.ok) {
+          throw new Error(`Product verification failed (${verifyRes.status})`);
+        }
+    
+        // Add to cart
+        await addItem(product.id, quantity);
+        
+        toast({
+          title: "✅ Added to cart",
+          description: `${quantity} × ${product.name}`,
+        });
+      } catch (error: any) {
+        console.error('Cart Error:', {
+          error: error.message,
+          productId: product.id,
+          stack: error.stack
+        });
+    
+        let userMessage = "Failed to add item to cart";
+        
+        if (error.message.includes("offline")) {
+          userMessage = "Network unavailable - please check your internet connection";
+        } else if (error.name === "AbortError") {
+          userMessage = "Request timed out - server may be unavailable";
+        } else if (error.message.includes("Failed to fetch")) {
+          userMessage = "Cannot connect to the server - please try again later";
+        }
+    
+        toast({
+          title: "❌ Error",
+          description: userMessage,
+          variant: "destructive",
+          duration: 5000 // Show longer for important errors
+        });
+      } finally {
+        setIsAddingToCart(false);
+      }
+    };
   
   const handleAddToWishlist = () => {
     setIsAddingToWishlist(true);
@@ -288,16 +364,20 @@ const ProductDetail = () => {
                 <div className="flex items-center mb-6">
                   {product.selling_price && product.selling_price > 0 ? (
                     <>
-                      <span className="text-3xl font-bold text-gray-900">₹{(product.selling_price).toFixed(2)}</span>
+                      <span className="text-3xl font-bold text-gray-900">
+                        ₹{(product.selling_price * quantity).toFixed(2)}
+                      </span>
                       <span className="text-lg text-gray-500 line-through ml-3">
-                        ₹{(product.price).toFixed(2)}
+                        ₹{(product.price * quantity).toFixed(2)}
                       </span>
                       <Badge className="ml-3 bg-red-500">
                         {Math.round(((product.price - product.selling_price) / product.price) * 100)}% OFF
                       </Badge>
                     </>
                   ) : (
-                    <span className="text-3xl font-bold text-gray-900">₹{(product.price).toFixed(2)}</span>
+                    <span className="text-3xl font-bold text-gray-900">
+                      ₹{(product.price * quantity).toFixed(2)}
+                    </span>
                   )}
                 </div>
                 
@@ -335,15 +415,16 @@ const ProductDetail = () => {
                       <Minus className="h-4 w-4" />
                     </Button>
                     <Input
-                      id="quantity"
-                      type="number"
-                      className="h-10 w-16 rounded-none text-center"
-                      value={quantity}
-                      onChange={(e) => handleQuantityChange(e.target.value)}
-                      min="1"
-                      max={product.stock}
-                      disabled={product.stock <= 0}
-                    />
+                        id="quantity"
+                        type="number"
+                        className="h-10 w-16 rounded-none text-center"
+                        value={quantity}
+                        onChange={handleQuantityChange}
+                        onBlur={handleQuantityBlur}
+                        min="1"
+                        max={product.stock}
+                        disabled={product.stock <= 0}
+                      />
                     <Button
                       variant="outline"
                       size="icon"

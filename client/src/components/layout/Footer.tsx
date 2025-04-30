@@ -1,9 +1,9 @@
-import { Link } from "wouter";
-import { Store, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Facebook, Instagram, Linkedin, Store, Twitter } from "lucide-react";
+import { useState } from "react";
+import { Link } from "wouter";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -65,11 +65,11 @@ const Footer = () => {
                   Categories
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/products?type=vendors" className="text-gray-400 hover:text-white transition">
                   Vendors
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/vendor/register" className="text-gray-400 hover:text-white transition">
                   Become a Vendor

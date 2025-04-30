@@ -1,20 +1,19 @@
-import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  ShoppingCart, 
-  User, 
-  ChevronDown, 
-  Search, 
-  Menu, 
-  Store 
-} from "lucide-react";
 import LoginModal from "@/components/auth/LoginModal";
 import RegisterModal from "@/components/auth/RegisterModal";
 import VendorRegisterModal from "@/components/auth/VendorRegisterModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
+import {
+  ChevronDown,
+  Menu,
+  Search,
+  ShoppingCart,
+  Store
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "wouter";
 
 const Header = () => {
   const [location] = useLocation();
@@ -120,9 +119,9 @@ const Header = () => {
               <Link href="/products" className={`text-gray-600 hover:text-primary transition ${location === '/products' ? 'text-primary' : ''}`}>
                 Categories
               </Link>
-              <Link href="/products?type=vendors" className={`text-gray-600 hover:text-primary transition ${location.includes('vendors') ? 'text-primary' : ''}`}>
+              {/* <Link href="/products?type=vendors" className={`text-gray-600 hover:text-primary transition ${location.includes('vendors') ? 'text-primary' : ''}`}>
                 Vendors
-              </Link>
+              </Link> */}
             </nav>
             <div className="flex items-center space-x-4">
               <Link href="/cart" className="text-gray-600 hover:text-primary text-lg relative" aria-label="Shopping cart">
@@ -160,12 +159,12 @@ const Header = () => {
                         >
                           Register
                         </button>
-                        <button
+                        {/* <button
                           onClick={openVendorRegisterModal}
                           className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                         >
                           Become a Vendor
-                        </button>
+                        </button> */}
                       </div>
                     ) : (
                       <div className="py-1">
@@ -178,11 +177,11 @@ const Header = () => {
                         <Link href="/addresses" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                           Addresses
                         </Link>
-                        {user?.isVendor && (
+                        {/* {user?.isVendor && (
                           <Link href="/vendor/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                             Vendor Dashboard
                           </Link>
-                        )}
+                        )} */}
                         <div className="border-t border-gray-100 my-1"></div>
                         <button
                           onClick={handleLogout}
