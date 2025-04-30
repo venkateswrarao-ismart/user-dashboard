@@ -367,9 +367,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ? parseInt(req.query.offset as string)
         : 0;
 
-      const response = await fetch(
-        `/api/categories/${categoryId}/products?limit=${limit}&offset=${offset}`,
-      );
+      const products = await storage.getProductsByCategory(parseInt(categoryId), limit, offset);
+      if (!products) {
+        throw new Error("Failed to fetch category products");
+      }
       const data = await response.json();
 
       if (!data) {

@@ -32,10 +32,20 @@ type Product = {
 const FeaturedProducts = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const { data: products = [], isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['/api/products', { featured: true }],
+    queryFn: async () => {
+      const response = await fetch('/api/products?featured=true');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      const data = await response.json();
+      return data.products || [];
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  const products = data || [];
   
   const scrollLeft = () => {
     if (containerRef.current) {
