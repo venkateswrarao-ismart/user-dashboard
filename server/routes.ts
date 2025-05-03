@@ -1,4 +1,4 @@
-import type { Express, Request, Response, NextFunction } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import {
 import session from "express-session";
 import crypto from "crypto";
 import MemoryStore from "memorystore";
+import { supabase } from "../client/src/lib/supabase";
 
 // Session store
 const MemoryStoreSession = MemoryStore(session);
@@ -349,69 +350,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   );
 
-  // Category routes
-  app.get("/api/categories", async (req, res) => {
+  // Category routes  (Replaced with Supabase)
+  app.get("/api/categories", async (_req, res) => {
     try {
-      const categories = await storage.getAllCategories();
+      const { data: categories, error } = await supabase
+        .from('categories')
+        .select('*');
+
+      if (error) throw error;
       res.json(categories);
     } catch (error) {
+      console.error("Error fetching categories:", error);
       res.status(500).json({ message: "Failed to retrieve categories" });
     }
   });
 
-  app.get("/api/categories/:categoryId/products", async (req, res) => {
+  // Product routes (Replaced with Supabase)
+  app.get("/api/products", async (_req, res) => {
     try {
-      const categoryId = req.params.categoryId;
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
-      const offset = req.query.offset
-        ? parseInt(req.query.offset as string)
-        : 0;
+      const { data: products, error } = await supabase
+        .from('products')
+        .select('*');
 
-      const products = await storage.getProductsByCategory(
-        parseInt(categoryId),
-        limit,
-        offset,
-      );
-      if (!products) {
-        throw new Error("Failed to fetch category products");
-      }
-
-      res.json({ products: products || [] });
-    } catch (error) {
-      console.error("Error fetching category products:", error);
-      res.status(500).json({ message: "Failed to retrieve products" });
-    }
-  });
-
-  // Product routes
-  app.get("/api/products", async (req, res) => {
-    try {
-      const response = await fetch(
-        "https://v0-next-js-and-supabase-app.vercel.app/api/products",
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch products from external API");
-      }
-      const data = await response.json();
-      res.json(data);
+      if (error) throw error;
+      res.json({ products });
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ message: "Failed to retrieve products" });
     }
   });
 
+  // Single product route (Replaced with Supabase)
   app.get("/api/products/:productId", async (req, res) => {
     try {
-      const productId = req.params.productId;
-      const response = await fetch(
-        "https://v0-next-js-and-supabase-app.vercel.app/api/products",
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch products from external API");
-      }
-      const data = await response.json();
-      const product = data.products.find((p: any) => p.id === productId);
+      const { data: product, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', req.params.productId)
+        .single();
 
+      if (error) throw error;
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
@@ -423,7 +401,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Cart routes
+  // Banners route (Replaced with Supabase)
+  app.get("/api/banner", async (_req, res) => {
+    try {
+      const { data: banners, error } = await supabase
+        .from('banners')
+        .select('*')
+        .eq('is_active', true);
+
+      if (error) throw error;
+      res.json(banners);
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      res.status(500).json({ message: "Failed to retrieve banners" });
+    }
+  });
+
+
+  // Cart routes (Retained from original code)
   app.get("/api/cart", async (req, res) => {
     try {
       let cart;

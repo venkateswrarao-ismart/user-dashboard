@@ -1,7 +1,7 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { queryClient } from "@/lib/queryClient";
+import { supabase } from "@/lib/supabase";
 
 type User = {
   id: number;
@@ -16,7 +16,7 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   checkSession: () => Promise<void>;
@@ -43,27 +43,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const checkSession = async (): Promise<void> => {
     try {
-      const res = await fetch("/api/auth/session", {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
       
-      if (!res.ok) {
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
-      
-      const data = await res.json();
-      if (data.user) {
-        setUser(data.user);
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+          
+        setUser(profile);
       } else {
         setUser(null);
       }
     } catch (error) {
-      console.error("Failed to check session:", error);
+      console.error("Session check failed:", error);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -72,18 +67,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     checkSession();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      checkSession();
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (username: string, password: string): Promise<void> => {
+  const login = async (email: string, password: string): Promise<void> => {
     try {
-      const res = await apiRequest("POST", "/api/auth/signin", { username, password });
-      const userData = await res.json();
-      setUser(userData);
-      queryClient.invalidateQueries();
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${userData.username}!`,
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
+      
+      if (error) throw error;
+
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        setUser(profile);
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${profile.username}!`,
+        });
+      }
     } catch (error) {
       console.error("Login failed:", error);
       toast({
@@ -97,14 +110,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const register = async (userData: RegisterData): Promise<void> => {
     try {
-      const res = await apiRequest("POST", "/api/auth/signup", userData);
-      const newUser = await res.json();
-      setUser(newUser);
-      queryClient.invalidateQueries();
-      toast({
-        title: "Registration successful",
-        description: `Welcome, ${newUser.username}!`,
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
       });
+      
+      if (error) throw error;
+
+      if (data.user) {
+        const profile = {
+          id: data.user.id,
+          username: userData.username,
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          isVendor: false,
+        };
+        
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([profile]);
+          
+        if (profileError) throw profileError;
+        
+        setUser(profile);
+        toast({
+          title: "Registration successful",
+          description: `Welcome, ${profile.username}!`,
+        });
+      }
     } catch (error) {
       console.error("Registration failed:", error);
       toast({
@@ -118,9 +152,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async (): Promise<void> => {
     try {
-      await apiRequest("POST", "/api/auth/signout", {});
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
       setUser(null);
-      queryClient.invalidateQueries();
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
