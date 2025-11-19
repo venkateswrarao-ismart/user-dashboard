@@ -133,8 +133,7 @@
 
 // export default FeaturedProducts;
 
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -180,14 +179,6 @@ const FeaturedProducts = () => {
   const start = currentPage * ITEMS_PER_PAGE;
   const currentProducts = products.slice(start, start + ITEMS_PER_PAGE);
 
-  // ⏱ Auto slideshow every 5s
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentPage((prev) => (prev >= totalPages - 1 ? 0 : prev + 1));
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [totalPages]);
-
   const handlePrev = () => setCurrentPage((p) => Math.max(p - 1, 0));
   const handleNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages - 1));
 
@@ -207,7 +198,7 @@ const FeaturedProducts = () => {
               to="/products"
               className="px-3 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
-              View All →
+              View All
             </Link>
 
             {/* NAVIGATION BUTTONS */}
@@ -231,7 +222,7 @@ const FeaturedProducts = () => {
             transition={{ duration: 0.5 }}
             className="
               grid 
-              grid-cols-2        /* ✔ 2 per row on mobile */
+              grid-cols-2        
               sm:grid-cols-2     
               md:grid-cols-3     
               lg:grid-cols-4     
@@ -254,12 +245,12 @@ const FeaturedProducts = () => {
                       className="w-full h-36 sm:h-44 md:h-48 object-cover rounded-lg mb-3"
                     />
 
-                    {/* TITLE - FIXED HEIGHT */}
+                    {/* TITLE */}
                     <h3 className="text-sm sm:text-base font-semibold line-clamp-2 min-h-[40px] sm:min-h-[48px]">
                       {product.name}
                     </h3>
 
-                    {/* PRICE SECTION */}
+                    {/* PRICE */}
                     <div className="mt-auto text-sm sm:text-base">
                       {product.selling_price < product.price ? (
                         <>
