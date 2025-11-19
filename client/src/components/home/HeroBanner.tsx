@@ -516,7 +516,7 @@ const HeroBanner = () => {
                 src={video.src}
                 className="
                   w-full
-                  h-[155px] sm:h-[280px] md:h-[300px] lg:h-[375px]  /* 🔥 HEIGHT REDUCED 50% */
+                  h-[225px] sm:h-[380px] md:h-[300px] lg:h-[375px]  /* 🔥 HEIGHT REDUCED 50% */
                   object-cover rounded-xl
                 "
                 autoPlay
