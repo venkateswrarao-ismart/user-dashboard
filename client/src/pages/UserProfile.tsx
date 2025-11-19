@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useMutation } from "@tanstack/react-query";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -52,11 +55,43 @@ const passwordChangeSchema = z.object({
 });
 
 const UserProfile = () => {
-  const [, navigate] = useLocation();
+  const navigate = useNavigate();
   const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+
+ 
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+const [isDeleting, setIsDeleting] = useState(false);
+
+const deleteAccountMutation = useMutation({
+  mutationFn: async () => {
+    if (!user?.id) throw new Error("User not found");
+    await apiRequest("DELETE", `/api/users/${user.id}/delete`);
+  },
+  onSuccess: () => {
+    toast({
+      title: "Account Deleted",
+      description: "Your account and related data have been permanently deleted.",
+    });
+    navigate("/"); // Redirect to homepage or login
+  },
+  onError: (error) => {
+    console.error("Delete error", error);
+    toast({
+      title: "Failed to delete account",
+      description: "Something went wrong while deleting your account.",
+      variant: "destructive",
+    });
+  },
+  onSettled: () => {
+    setIsDeleting(false);
+    setShowDeleteDialog(false);
+  },
+});
+
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -80,6 +115,8 @@ const UserProfile = () => {
     enabled: isAuthenticated && !!user?.id,
   });
 
+  console.log('user-details',userData)
+
   // Profile form
   const profileForm = useForm<z.infer<typeof userProfileSchema>>({
     resolver: zodResolver(userProfileSchema),
@@ -102,11 +139,11 @@ const UserProfile = () => {
 
   // Update form values when user data is loaded
   useEffect(() => {
-    if (userData) {
+    if (user) {
       profileForm.reset({
-        firstName: userData.firstName || "",
-        lastName: userData.lastName || "",
-        email: userData.email || "",
+        firstName: user?.full_name || "",
+        lastName: user?.full_name || "",
+        email: user?.email || "",
       });
     }
   }, [userData, profileForm]);
@@ -271,17 +308,7 @@ const UserProfile = () => {
                         )}
                       />
                       
-                      <div>
-                        <FormLabel>Username</FormLabel>
-                        <Input 
-                          value={userData?.username || user.username} 
-                          disabled 
-                          className="bg-gray-50"
-                        />
-                        <p className="text-sm text-gray-500 mt-1">
-                          Your username cannot be changed.
-                        </p>
-                      </div>
+                     
                     </CardContent>
                     <CardFooter className="flex justify-between">
                       <Button 
@@ -309,50 +336,54 @@ const UserProfile = () => {
               {/* Account Management */}
               <Card className="mt-6">
                 <CardHeader>
-                  <CardTitle>Account Management</CardTitle>
-                  <CardDescription>
-                    Manage your account settings and preferences
-                  </CardDescription>
+                 
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Vendor Status</h3>
-                    <p className="text-gray-600 mb-2">
-                      {user.isVendor ? 
-                        "You are a registered vendor." : 
-                        "You are currently a customer. Become a vendor to start selling products."}
-                    </p>
-                    {!user.isVendor && (
-                      <Button 
-                        variant="outline" 
-                        className="text-primary border-primary"
-                        onClick={() => navigate("/vendor/register")}
-                      >
-                        <Settings className="mr-2 h-4 w-4" />
-                        Become a Vendor
-                      </Button>
-                    )}
-                    {user.isVendor && (
-                      <Button 
-                        variant="outline" 
-                        className="text-primary border-primary"
-                        onClick={() => navigate("/vendor/dashboard")}
-                      >
-                        <Settings className="mr-2 h-4 w-4" />
-                        Vendor Dashboard
-                      </Button>
-                    )}
-                  </div>
+                 
                   
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Delete Account</h3>
-                    <p className="text-gray-600 mb-2">
-                      Once you delete your account, there is no going back. Please be certain.
-                    </p>
-                    <Button variant="destructive">
-                      Delete Account
-                    </Button>
-                  </div>
+                <div>
+  <h3 className="text-lg font-medium mb-2">Delete Account</h3>
+  <p className="text-gray-600 mb-2">
+    Once you delete your account, there is no going back. This action will permanently remove your profile, orders, addresses, and all associated data.
+  </p>
+  <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
+    Delete Account
+  </Button>
+</div>
+
+<Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Are you absolutely sure?</DialogTitle>
+      <DialogDescription>
+        This action cannot be undone. It will permanently delete your account and all associated data including orders, addresses, and personal information.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <Button variant="ghost" onClick={() => setShowDeleteDialog(false)}>
+        Cancel
+      </Button>
+      <Button
+        variant="destructive"
+        onClick={() => {
+          setIsDeleting(true);
+          deleteAccountMutation.mutate();
+        }}
+        disabled={isDeleting}
+      >
+        {isDeleting ? (
+          <>
+            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+            Deleting...
+          </>
+        ) : (
+          "Delete My Account"
+        )}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
                 </CardContent>
               </Card>
             </TabsContent>
@@ -449,45 +480,7 @@ const UserProfile = () => {
                 </Form>
               </Card>
               
-              {/* Security Settings */}
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle>Security Settings</CardTitle>
-                  <CardDescription>
-                    Manage your account security preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Two-Factor Authentication</h3>
-                    <p className="text-gray-600 mb-2">
-                      Enhance your account security by enabling two-factor authentication.
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      className="text-primary border-primary"
-                      disabled
-                    >
-                      Enable Two-Factor Authentication
-                    </Button>
-                    <p className="text-sm text-gray-500 mt-2">
-                      This feature is coming soon.
-                    </p>
-                  </div>
-                  
-                  <div className="pt-4 border-t border-gray-100">
-                    <h3 className="text-lg font-medium mb-2">Login History</h3>
-                    <p className="text-gray-600 mb-2">
-                      View your recent login activity.
-                    </p>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-sm text-gray-500">
-                        Login history is not currently available.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+             
             </TabsContent>
           </Tabs>
         </div>

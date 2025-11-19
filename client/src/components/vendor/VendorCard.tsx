@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 
 type Vendor = {
@@ -41,7 +41,7 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-md transition">
-      <div className={`relative h-32 bg-gradient-to-r ${getCategoryGradient(vendor.category)}`}>
+      <div className={`relative h-32 bg-gradient-to-r ${getCategoryGradient(typeof(vendor.category)==='string'?vendor.category:"")}`}>
         {vendor.coverUrl && (
           <img 
             src={vendor.coverUrl} 
@@ -80,7 +80,7 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
           </span>
           <span className="text-gray-500 text-sm">({vendor.totalReviews} reviews)</span>
         </div>
-        <Link href={`/vendor/${vendor.id}`}>
+        <Link to={`/vendor/${vendor.id}`}>
           <a className="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition">
             View Shop
           </a>

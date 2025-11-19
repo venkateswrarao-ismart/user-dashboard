@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, Link } from "wouter";
+import { Link,useLocation,useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
 import { 
@@ -42,8 +42,8 @@ import {
 } from "recharts";
 
 const VendorDashboard = () => {
-  const [, navigate] = useLocation();
-  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const navigate = useNavigate()
+    const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [dateRange, setDateRange] = useState("week");
 
   // Redirect if not authenticated or not a vendor
@@ -206,7 +206,7 @@ const VendorDashboard = () => {
         <div className="container mx-auto px-4">
           {/* Breadcrumb */}
           <div className="flex items-center text-sm text-gray-500 mb-6">
-            <Link href="/">
+            <Link to="/">
               <a className="hover:text-primary">Home</a>
             </Link>
             <ChevronRight className="h-4 w-4 mx-2" />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,11 +24,11 @@ const HeroBanner = () => {
   });
   
   const handlePrevSlide = () => {
-    setCurrentSlide(prev => (prev === 0 ? banners.length - 1 : prev - 1));
+    setCurrentSlide(prev => (prev === 0 ? banners?.length - 1 : prev - 1));
   };
   
   const handleNextSlide = () => {
-    setCurrentSlide(prev => (prev === banners.length - 1 ? 0 : prev + 1));
+    setCurrentSlide(prev => (prev === banners?.length - 1 ? 0 : prev + 1));
   };
   
   const goToSlide = (index: number) => {
@@ -37,14 +37,14 @@ const HeroBanner = () => {
   
   // Auto rotate slides
   useEffect(() => {
-    if (banners.length <= 1) return;
+    if (banners?.length <= 1) return;
     
     const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev === banners.length - 1 ? 0 : prev + 1));
+      setCurrentSlide(prev => (prev === banners?.length - 1 ? 0 : prev + 1));
     }, 5000);
     
     return () => clearInterval(interval);
-  }, [banners.length]);
+  }, [banners?.length]);
   
   if (isLoading) {
     return (
@@ -58,41 +58,38 @@ const HeroBanner = () => {
     );
   }
   
-  if (!banners.length) return null;
+  if (!banners?.length) return null;
+
+
+  console.log('all-banners',banners)
   
   return (
     <section className="bg-white">
       <div className="container mx-auto px-4 py-8">
         <div className="relative rounded-xl overflow-hidden">
-          {banners.map((banner: Banner, index: number) => (
+          {banners?.map((banner: Banner, index: number) => (
             <div 
-              key={banner.id} 
+              key={banner?.id} 
               className={cn(
                 "banner-slide",
                 index === currentSlide ? "block" : "hidden"
               )}
             >
               <div 
-                className="relative h-64 md:h-96 rounded-xl overflow-hidden flex items-center"
+                className="relative h-[500px] rounded-xl overflow-hidden flex items-center"
                 style={{ 
-                  background: `linear-gradient(to right, ${banner.startColor}, ${banner.endColor})` 
+                  background: `linear-gradient(to right, ${banner?.startColor}, ${banner?.endColor})` 
                 }}
               >
-                <div className="absolute inset-0 opacity-20">
+                <div className="absolute inset-0 ">
                   <img 
-                    src={banner.imageUrl} 
+                    src={banner?.image_url} 
                     alt={banner.title} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-fit"
                   />
                 </div>
                 <div className="container mx-auto px-6 md:px-12 relative z-10 text-white">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-2">{banner.title}</h2>
-                  <p className="text-lg md:text-xl mb-6">{banner.subtitle}</p>
-                  <Link href={banner.buttonLink}>
-                    <span className="bg-white text-primary font-medium px-6 py-3 rounded-lg hover:bg-gray-100 transition inline-block cursor-pointer">
-                      {banner.buttonText}
-                    </span>
-                  </Link>
+                 
                 </div>
               </div>
             </div>
@@ -100,7 +97,7 @@ const HeroBanner = () => {
           
           {/* Banner Navigation */}
           <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-            {banners.map((_: any, index: number) => (
+            {banners?.map((_: any, index: number) => (
               <button 
                 key={index}
                 className={cn(

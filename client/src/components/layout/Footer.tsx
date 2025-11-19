@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Facebook, Instagram, Linkedin, Store, Twitter } from "lucide-react";
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -25,8 +25,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
-              <Store className="text-primary text-2xl mr-2" />
-              <span className="text-xl font-bold">MultiVendor</span>
+              <span className="text-xl font-bold">Ismart Groceries</span>
             </div>
             <p className="text-gray-400 mb-4">
               The leading multi-vendor marketplace platform connecting sellers and buyers worldwide.
@@ -51,17 +50,17 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-gray-400 hover:text-white transition">
+                <Link to="/" className="text-gray-400 hover:text-white transition">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="text-gray-400 hover:text-white transition">
+                <Link to="/products" className="text-gray-400 hover:text-white transition">
                   Shop
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="text-gray-400 hover:text-white transition">
+                <Link to="/categories" className="text-gray-400 hover:text-white transition">
                   Categories
                 </Link>
               </li>
@@ -70,11 +69,11 @@ const Footer = () => {
                   Vendors
                 </Link>
               </li> */}
-              <li>
-                <Link href="/vendor/register" className="text-gray-400 hover:text-white transition">
+              {/* <li>
+                <Link to="/vendor/register" className="text-gray-400 hover:text-white transition">
                   Become a Vendor
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           
@@ -82,27 +81,27 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-4">Customer Service</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/profile" className="text-gray-400 hover:text-white transition">
+                <Link to="/profile" className="text-gray-400 hover:text-white transition">
                   My Account
                 </Link>
               </li>
               <li>
-                <Link href="/orders" className="text-gray-400 hover:text-white transition">
+                <Link to="/orders" className="text-gray-400 hover:text-white transition">
                   Track Order
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="text-gray-400 hover:text-white transition">
+                <Link to="/help" className="text-gray-400 hover:text-white transition">
                   Returns & Refunds
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="text-gray-400 hover:text-white transition">
+                <Link to="/help" className="text-gray-400 hover:text-white transition">
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white transition">
+                <Link to="/contact" className="text-gray-400 hover:text-white transition">
                   Contact Us
                 </Link>
               </li>
@@ -138,13 +137,13 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 mb-4 md:mb-0">© 2023 MultiVendor Marketplace. All rights reserved.</p>
             <div className="flex space-x-4">
-              <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition">
+              <Link to="/terms" className="text-gray-400 hover:text-white text-sm transition">
                 Terms of Service
               </Link>
-              <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition">
+              <Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition">
                 Privacy Policy
               </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white text-sm transition">
+              <Link to="/cookies" className="text-gray-400 hover:text-white text-sm transition">
                 Cookies
               </Link>
             </div>

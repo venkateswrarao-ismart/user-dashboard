@@ -13,10 +13,11 @@ import {
   Store
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation ,useNavigate} from "react-router-dom";
 
 const Header = () => {
-  const [location] = useLocation();
+   const navigate = useNavigate();
+ 
   const { user, isAuthenticated, logout } = useAuth();
   const { cart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,10 +39,11 @@ const Header = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
   };
   
+ 
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to search results page
-    window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
   };
   
   const handleLogout = () => {
@@ -84,9 +86,13 @@ const Header = () => {
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <Store className="text-primary text-2xl" />
-              <span className="text-xl font-bold text-gray-800">MultiVendor</span>
+            <Link to="/" className="flex items-center space-x-2">
+            <img
+                    src={ "/I-smart-logo.png"}
+                    alt="Uploaded"
+                    className="max-h-28 rounded-md "
+                  />
+              
             </Link>
           </div>
 
@@ -113,10 +119,10 @@ const Header = () => {
           {/* Navigation Items */}
           <div className="flex items-center space-x-6">
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/" className={`text-gray-600 hover:text-primary transition ${location === '/' ? 'text-primary' : ''}`}>
+              <Link to="/" className={`text-gray-600 hover:text-primary transition ${window.location.href === '/' ? 'text-primary' : ''}`}>
                 Home
               </Link>
-              <Link href="/products" className={`text-gray-600 hover:text-primary transition ${location === '/products' ? 'text-primary' : ''}`}>
+              <Link to="/categories" className={`text-gray-600 hover:text-primary transition ${window.location.href === '/products' ? 'text-primary' : ''}`}>
                 Categories
               </Link>
               {/* <Link href="/products?type=vendors" className={`text-gray-600 hover:text-primary transition ${location.includes('vendors') ? 'text-primary' : ''}`}>
@@ -124,7 +130,7 @@ const Header = () => {
               </Link> */}
             </nav>
             <div className="flex items-center space-x-4">
-              <Link href="/cart" className="text-gray-600 hover:text-primary text-lg relative" aria-label="Shopping cart">
+              <Link to="/cart" className="text-gray-600 hover:text-primary text-lg relative" aria-label="Shopping cart">
                 <ShoppingCart className="h-6 w-6" />
                 {cartItemCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -168,14 +174,17 @@ const Header = () => {
                       </div>
                     ) : (
                       <div className="py-1">
-                        <Link href="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                           My Profile
                         </Link>
-                        <Link href="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                           My Orders
                         </Link>
-                        <Link href="/addresses" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <Link to="/addresses" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                           Addresses
+                        </Link>
+                        <Link to="/cart" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                          Cart
                         </Link>
                         {/* {user?.isVendor && (
                           <Link href="/vendor/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
@@ -229,13 +238,13 @@ const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden pb-4">
             <nav className="flex flex-col space-y-3">
-              <Link href="/" className="text-gray-600 hover:text-primary transition py-2">
+              <Link to="/" className="text-gray-600 hover:text-primary transition py-2">
                 Home
               </Link>
-              <Link href="/products" className="text-gray-600 hover:text-primary transition py-2">
+              <Link to="/products" className="text-gray-600 hover:text-primary transition py-2">
                 Categories
               </Link>
-              <Link href="/products?type=vendors" className="text-gray-600 hover:text-primary transition py-2">
+              <Link to="/products?type=vendors" className="text-gray-600 hover:text-primary transition py-2">
                 Vendors
               </Link>
               {!isAuthenticated ? (
@@ -261,17 +270,17 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Link href="/profile" className="text-gray-600 hover:text-primary transition py-2">
+                  <Link to="/profile" className="text-gray-600 hover:text-primary transition py-2">
                     My Profile
                   </Link>
-                  <Link href="/orders" className="text-gray-600 hover:text-primary transition py-2">
+                  <Link to="/orders" className="text-gray-600 hover:text-primary transition py-2">
                     My Orders
                   </Link>
-                  <Link href="/addresses" className="text-gray-600 hover:text-primary transition py-2">
+                  <Link to="/addresses" className="text-gray-600 hover:text-primary transition py-2">
                     Addresses
                   </Link>
                   {user?.isVendor && (
-                    <Link href="/vendor/dashboard" className="text-gray-600 hover:text-primary transition py-2">
+                    <Link to="/vendor/dashboard" className="text-gray-600 hover:text-primary transition py-2">
                       Vendor Dashboard
                     </Link>
                   )}

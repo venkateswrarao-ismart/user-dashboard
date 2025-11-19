@@ -173,7 +173,7 @@ export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
 export const carts = pgTable("carts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").unique(),
-  sessionId: text("session_id"),
+  // sessionId: text("session_id"),
   total: decimal("total", { precision: 10, scale: 2 }).default("0").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

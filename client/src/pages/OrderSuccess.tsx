@@ -1,42 +1,62 @@
-import { useEffect } from "react";
-import { useParams, Link, useLocation } from "wouter";
-import { Helmet } from "react-helmet";
-import { useQuery } from "@tanstack/react-query";
-import { 
-  CheckCircle, 
-  Truck, 
-  Package, 
-  CreditCard, 
-  Map, 
-  ChevronRight, 
-  RefreshCw, 
-  AlertCircle 
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency, formatDate } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import { formatCurrency } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import {
+  AlertCircle,
+  CheckCircle,
+  ChevronRight,
+  Map,
+  Package,
+  RefreshCw
+} from "lucide-react";
+import { useEffect } from "react";
+import { Helmet } from "react-helmet";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const OrderSuccess = () => {
   const { orderId } = useParams();
-  const [, navigate] = useLocation();
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthLoading && !isAuthenticated) {
       navigate("/");
     }
   }, [isAuthLoading, isAuthenticated, navigate]);
 
-  // Fetch order details
   const { 
     data: order, 
     isLoading, 
     error 
   } = useQuery({
-    queryKey: [`/api/orders/${orderId}`],
-    enabled: !!orderId && isAuthenticated,
+    queryKey: [`order-${orderId}`],
+    enabled: isAuthenticated && !!orderId,
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select(`
+            *,
+            order_items:order_items (
+              *,
+              products:products (
+                *
+              )
+            )
+          `)
+          .eq('id', orderId)
+          .single();
+
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error('Error fetching order:', error);
+        throw error;
+      }
+    },
   });
 
   if (isLoading || isAuthLoading) {
@@ -79,7 +99,7 @@ const OrderSuccess = () => {
   }
 
   const getStatusColor = (status: string) => {
-    switch(status.toLowerCase()) {
+    switch(status) {
       case 'completed':
         return 'bg-green-100 text-green-800';
       case 'processing':
@@ -95,29 +115,25 @@ const OrderSuccess = () => {
     }
   };
 
+  const totalItems = order.order_items?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+
   return (
     <>
       <Helmet>
-        <title>Order Confirmation | MultiVendor Marketplace</title>
+        <title>Order Confirmation | Ismart Grocery</title>
         <meta name="description" content={`Thank you for your order! Your order #${orderId} has been received and is being processed.`} />
       </Helmet>
       
       <div className="bg-gray-50 py-8">
         <div className="container mx-auto px-4">
-          {/* Breadcrumb */}
           <div className="flex items-center text-sm text-gray-500 mb-6">
-            <Link href="/">
-              <a className="hover:text-primary">Home</a>
-            </Link>
+            <Link to="/" className="hover:text-primary">Home</Link>
             <ChevronRight className="h-4 w-4 mx-2" />
-            <Link href="/orders">
-              <a className="hover:text-primary">Orders</a>
-            </Link>
+            <Link to="/orders" className="hover:text-primary">Orders</Link>
             <ChevronRight className="h-4 w-4 mx-2" />
             <span className="text-gray-700">Order #{orderId}</span>
           </div>
           
-          {/* Order Confirmation */}
           <div className="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="h-10 w-10 text-green-600" />
@@ -127,7 +143,7 @@ const OrderSuccess = () => {
               Thank you for your purchase. Your order has been received and is being processed.
             </p>
             <div className="inline-block px-4 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-6">
-              Order #{order.orderNumber}
+              Order #{orderId}
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
@@ -142,26 +158,26 @@ const OrderSuccess = () => {
               </div>
               <div className="border border-gray-200 rounded-lg p-4">
                 <div className="flex flex-col items-center">
-                  <CreditCard className="h-6 w-6 text-primary mb-2" />
-                  <h3 className="font-medium">Payment Method</h3>
+                  <Package className="h-6 w-6 text-primary mb-2" />
+                  <h3 className="font-medium">Total Items</h3>
                   <span className="mt-1 text-sm text-gray-600">
-                    {order.paymentMethod === 'cash-on-delivery' ? 'Cash on Delivery' : order.paymentMethod}
+                    {totalItems} items
                   </span>
                 </div>
               </div>
               <div className="border border-gray-200 rounded-lg p-4">
                 <div className="flex flex-col items-center">
-                  <Truck className="h-6 w-6 text-primary mb-2" />
-                  <h3 className="font-medium">Estimated Delivery</h3>
-                  <span className="mt-1 text-sm text-gray-600">3-5 Business Days</span>
+                  <Map className="h-6 w-6 text-primary mb-2" />
+                  <h3 className="font-medium">Delivery Address</h3>
+                  <span className="mt-1 text-sm text-gray-600">
+                    {order.delivery_address || 'Address not available'}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Order Details */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Order Items */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-100">
@@ -169,27 +185,29 @@ const OrderSuccess = () => {
                 </div>
                 
                 <div className="divide-y divide-gray-100">
-                  {order.items.map((item: any) => (
+                  {order.order_items?.map((item: any) => (
                     <div key={item.id} className="p-6 flex flex-col sm:flex-row">
                       <div className="w-full sm:w-20 h-20 bg-gray-100 rounded-md overflow-hidden mb-4 sm:mb-0">
                         <img 
-                          src={item.product.imageUrl} 
-                          alt={item.product.name} 
+                          src={item.products?.image_url || '/placeholder-product.jpg'} 
+                          alt={item.products?.name} 
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1 sm:ml-4">
                         <div className="flex flex-col sm:flex-row justify-between">
                           <div>
-                            <h3 className="font-medium text-gray-900">{item.product.name}</h3>
+                            <h3 className="font-medium text-gray-900">{item.products?.name}</h3>
                             <p className="text-sm text-gray-500">
-                              Sold by: {item.vendor?.businessName || "Unknown Vendor"}
+                              SKU: {item.products?.sku || 'N/A'}
                             </p>
                           </div>
                           <div className="text-right mt-2 sm:mt-0">
-                            <p className="font-bold text-gray-900">{formatCurrency(item.total)}</p>
+                            <p className="font-bold text-gray-900">
+                              {formatCurrency(item.unit_price * item.quantity)}
+                            </p>
                             <p className="text-sm text-gray-500">
-                              {formatCurrency(item.price)} x {item.quantity}
+                              {formatCurrency(item.unit_price)} x {item.quantity}
                             </p>
                           </div>
                         </div>
@@ -200,9 +218,7 @@ const OrderSuccess = () => {
               </div>
             </div>
             
-            {/* Order Summary and Shipping Info */}
             <div className="space-y-6">
-              {/* Order Summary */}
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-100">
                   <h2 className="text-xl font-semibold">Order Summary</h2>
@@ -210,55 +226,32 @@ const OrderSuccess = () => {
                 <div className="p-6 space-y-4">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">{formatCurrency(order.total * 0.9)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping</span>
                     <span className="font-medium">
-                      {order.total > 50 ? "Free" : formatCurrency(5.99)}
+                      {formatCurrency(order.total_amount)}
                     </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Tax</span>
-                    <span className="font-medium">{formatCurrency(order.total * 0.1)}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
-                    <span>{formatCurrency(order.total)}</span>
+                    <span>{formatCurrency(order.total_amount)}</span>
                   </div>
                 </div>
               </div>
               
-              {/* Shipping Information */}
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-100">
                   <div className="flex items-center">
                     <Map className="h-5 w-5 text-primary mr-2" />
-                    <h2 className="text-xl font-semibold">Shipping Address</h2>
+                    <h2 className="text-xl font-semibold">Delivery Address</h2>
                   </div>
                 </div>
                 <div className="p-6">
-                  {order.shippingAddress ? (
-                    <div>
-                      <p className="font-medium text-gray-900 mb-1">
-                        {order.shippingAddress.addressLine1}
-                      </p>
-                      {order.shippingAddress.addressLine2 && (
-                        <p className="text-gray-600">{order.shippingAddress.addressLine2}</p>
-                      )}
-                      <p className="text-gray-600">
-                        {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
-                      </p>
-                      <p className="text-gray-600">{order.shippingAddress.country}</p>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">Address information not available</p>
-                  )}
+                  <p className="text-gray-600 whitespace-pre-wrap">
+                    {order.delivery_address || 'Address information not available'}
+                  </p>
                 </div>
               </div>
               
-              {/* Actions */}
               <div className="flex flex-col space-y-3">
                 <Button 
                   className="bg-primary hover:bg-blue-600"
