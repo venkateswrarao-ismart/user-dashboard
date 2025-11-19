@@ -779,7 +779,7 @@ const Checkout = () => {
   return (
     <>
       <Helmet>
-        <title>Checkout | Ismart Grocery</title>
+        <title>Checkout | RENTXP</title>
         <meta name="description" content="Complete your purchase by selecting your shipping address and payment method." />
       </Helmet>
       

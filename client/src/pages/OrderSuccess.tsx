@@ -120,7 +120,7 @@ const OrderSuccess = () => {
   return (
     <>
       <Helmet>
-        <title>Order Confirmation | Ismart Grocery</title>
+        <title>Order Confirmation | RENTXP</title>
         <meta name="description" content={`Thank you for your order! Your order #${orderId} has been received and is being processed.`} />
       </Helmet>
       

@@ -411,7 +411,7 @@ const UserOrders = () => {
   return (
     <>
       <Helmet>
-        <title>My Orders | Ismart Grocery</title>
+        <title>My Orders | RENTXP</title>
         <meta name="description" content="View and track your order history, check order status, and manage your purchases." />
       </Helmet>
       
