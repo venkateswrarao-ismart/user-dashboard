@@ -88,7 +88,7 @@ const Header = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
             <img
-                    src={ "/rentxp.jpg"}
+                    src={ "/rent-xp.png"}
                     alt="Uploaded"
                     className="max-h-28 rounded-md "
                   />
