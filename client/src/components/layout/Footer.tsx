@@ -28,7 +28,7 @@ const Footer = () => {
               <span className="text-xl font-bold">RENTXP</span>
             </div>
             <p className="text-gray-400 mb-4">
-              The leading multi-vendor marketplace platform connecting sellers and buyers worldwide.
+              Rent the latest consoles, games, and accessories. No commitment, just gaming.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition">

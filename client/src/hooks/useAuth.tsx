@@ -23,16 +23,18 @@ type AuthContextType = {
 };
 
 type RegisterData = {
-  username: string;
   email: string;
   password: string;
   firstName?: string;
   lastName?: string;
+  phone?:string;
 };
 
 type AuthProviderProps = {
   children: ReactNode;
 };
+
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -109,46 +111,121 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const register = async (userData: RegisterData): Promise<void> => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
+  try {
+    // 1️⃣ Sign up the user in Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email: userData.email,
+      password: userData.password,
+    });
+
+    if (error) throw error;
+
+    if (data.user) {
+      // 2️⃣ Prepare the profile object matching your table
+      const profile = {
+        id: data.user.id,
+        full_name: `${userData.firstName} ${userData.lastName}`,
+        email: userData.email,
+        role: 'customer', // set role based on your app logic
+        new_onboard: true,
+        phone:userData.phone
+      };
+
+      // 3️⃣ Insert the profile into the profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([profile]);
+
+      if (profileError) {
+        console.error("Profile insert error:", profileError);
+        toast({
+          title: "Registration partially successful",
+          description: "User created but failed to create profile.",
+          variant: "destructive",
+        });
+        throw profileError;
+      }
+
+      // 4️⃣ Optionally, automatically sign in the user to get session tokens
+      const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
         email: userData.email,
         password: userData.password,
       });
-      
-      if (error) throw error;
 
-      if (data.user) {
-        const profile = {
-          id: data.user.id,
-          username: userData.username,
-          email: userData.email,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          isVendor: false,
-        };
-        
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([profile]);
-          
-        if (profileError) throw profileError;
-        
-        setUser(profile);
+      if (sessionError) {
         toast({
           title: "Registration successful",
-          description: `Welcome, ${profile.username}!`,
+          description: "User created but couldn't sign in automatically.",
+          variant: "warning",
         });
       }
-    } catch (error) {
-      console.error("Registration failed:", error);
-      toast({
-        title: "Registration failed",
-        description: "Please check your information and try again.",
-        variant: "destructive",
+
+      // 5️⃣ Set local user state
+      setUser({
+        id: data.user.id,
+        full_name: profile.full_name,
+        email: profile.email,
+        role: profile.role,
       });
-      throw error;
+
+      toast({
+        title: "Registration successful",
+        description: `Welcome, ${userData.firstName}!`,
+      });
     }
-  };
+  } catch (error) {
+    console.error("Registration failed:", error);
+    toast({
+      title: "Registration failed",
+      description: "Please check your information and try again.",
+      variant: "destructive",
+    });
+    throw error;
+  }
+};
+
+
+  // const register = async (userData: RegisterData): Promise<void> => {
+  //   try {
+  //     const { data, error } = await supabase.auth.signUp({
+  //       email: userData.email,
+  //       password: userData.password,
+  //     });
+      
+  //     if (error) throw error;
+
+  //     if (data.user) {
+  //       const profile = {
+  //         id: data.user.id,
+  //         username: userData.username,
+  //         email: userData.email,
+  //         firstName: userData.firstName,
+  //         lastName: userData.lastName,
+  //         isVendor: false,
+  //       };
+        
+  //       const { error: profileError } = await supabase
+  //         .from('profiles')
+  //         .insert([profile]);
+          
+  //       if (profileError) throw profileError;
+        
+  //       setUser(profile);
+  //       toast({
+  //         title: "Registration successful",
+  //         description: `Welcome, ${profile.username}!`,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Registration failed:", error);
+  //     toast({
+  //       title: "Registration failed",
+  //       description: "Please check your information and try again.",
+  //       variant: "destructive",
+  //     });
+  //     throw error;
+  //   }
+  // };
 
   const logout = async (): Promise<void> => {
     try {

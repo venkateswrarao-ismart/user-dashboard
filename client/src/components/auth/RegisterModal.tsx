@@ -18,8 +18,8 @@ type RegisterModalProps = {
 
 const registerSchema = z.object({
   firstName: z.string().optional(),
+  phone: z.string().optional(),
   lastName: z.string().optional(),
-  username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Please enter a valid email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
@@ -42,11 +42,11 @@ const RegisterModal = ({ isOpen, onClose, onShowLogin }: RegisterModalProps) => 
     defaultValues: {
       firstName: "",
       lastName: "",
-      username: "",
       email: "",
       password: "",
       confirmPassword: "",
       acceptTerms: false,
+      phone:""
     },
   });
 
@@ -115,10 +115,10 @@ const RegisterModal = ({ isOpen, onClose, onShowLogin }: RegisterModalProps) => 
             
             <FormField
               control={form.control}
-              name="username"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Phone</FormLabel>
                   <FormControl>
                     <Input placeholder="johndoe" {...field} disabled={isLoading} />
                   </FormControl>
