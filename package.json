@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --root client",
-    "build": "vite build --root client",
-    "preview": "vite preview --root client",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "check": "tsc"
   },
   "dependencies": {
