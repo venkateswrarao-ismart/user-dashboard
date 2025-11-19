@@ -43,7 +43,6 @@ const FeaturedProducts = () => {
   const start = currentPage * ITEMS_PER_PAGE;
   const currentProducts = products.slice(start, start + ITEMS_PER_PAGE);
 
-  // 🔁 Auto slideshow every 5s
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentPage((prev) => (prev >= totalPages - 1 ? 0 : prev + 1));
@@ -57,11 +56,20 @@ const FeaturedProducts = () => {
   return (
     <section className="bg-white py-12">
       <div className="container mx-auto px-4">
+        
         {/* HEADER */}
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold text-gray-800">Featured Products</h2>
 
-          <div className="flex space-x-2">
+          {/* ➤ VIEW ALL BUTTON */}
+          <div className="flex items-center gap-3">
+            <Link
+              to="/products"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              View All
+            </Link>
+
             <button onClick={handlePrev} disabled={currentPage === 0}>
               <ChevronLeft className="w-10 h-10 bg-gray-100 rounded-full p-2 hover:bg-gray-200" />
             </button>
@@ -74,7 +82,7 @@ const FeaturedProducts = () => {
         {/* 🎭 ANIMATED PRODUCT GRID */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentPage} // re-renders animation when page changes
+            key={currentPage}
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -40 }}
@@ -82,20 +90,23 @@ const FeaturedProducts = () => {
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
           >
             {currentProducts.map((product) => (
-              <motion.div
-                key={product.id}
-                whileHover={{ scale: 1.03 }}
-                transition={{ type: "spring", stiffness: 200 }}
-              >
+              <motion.div key={product.id} whileHover={{ scale: 1.03 }} transition={{ type: "spring", stiffness: 200 }}>
                 <Link to={`/products/${product.id}`}>
-                  <div className="bg-white rounded-lg shadow-md p-4 flex flex-col hover:shadow-lg transition">
+                  <div className="bg-white rounded-lg shadow-md p-4 flex flex-col hover:shadow-lg transition h-full">
+
+                    {/* 🔧 FIXED IMAGE SIZE */}
                     <img
                       src={product.image_url || "https://via.placeholder.com/300"}
-                      className="aspect-square w-full object-cover rounded-lg mb-3"
+                      className="w-full h-48 object-cover rounded-lg mb-3"
                     />
-                    <h3 className="text-lg font-semibold">{product.name}</h3>
 
-                    <div className="mt-2">
+                    {/* 🔧 FIX TITLE HEIGHT */}
+                    <h3 className="text-lg font-semibold line-clamp-2 min-h-[48px]">
+                      {product.name}
+                    </h3>
+
+                    {/* 🔧 PRICE AT BOTTOM */}
+                    <div className="mt-auto">
                       {product.selling_price < product.price ? (
                         <>
                           <span className="text-xl font-bold">₹{product.selling_price}</span>
@@ -108,6 +119,7 @@ const FeaturedProducts = () => {
                         <span className="text-xl font-bold">₹{product.price}</span>
                       )}
                     </div>
+
                   </div>
                 </Link>
               </motion.div>
