@@ -224,7 +224,7 @@ export default function ProductList() {
     queryFn: async () => {
       let query = supabase
         .from("products")
-        .select("*, product_images(*)", { count: "exact" });
+        .select("*, product_images(*)", { count: "exact" }) .eq("company", "rentxp"); ;
 
       // Handle category filter
       if (slug) {

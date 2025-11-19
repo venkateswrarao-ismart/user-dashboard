@@ -164,7 +164,7 @@ const FeaturedProducts = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("products")
-        .select("*, product_images(*)")
+        .select("*, product_images(*)") .eq("company", "rentxp")
         .limit(20);
 
       return data?.map((p: any) => ({

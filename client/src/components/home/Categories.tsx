@@ -160,11 +160,19 @@ const Categories = () => {
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["all-categories"],
     queryFn: async () => {
+      // const { data, error } = await supabase
+      //   .from("categories")
+      //   .select("id, name, image_url, parent_id, is_active")
+      //   .eq("is_active", true)
+      //   .is("parent_id", null); // This line filters to top-level categories
+
       const { data, error } = await supabase
-        .from("categories")
-        .select("id, name, image_url, parent_id, is_active")
-        .eq("is_active", true)
-        .is("parent_id", null); // This line filters to top-level categories
+  .from("categories")
+  .select("id, name, image_url, parent_id, is_active")
+  .eq("is_active", true)
+  .is("parent_id", null)
+  .eq("company", "rentxp");  // Filter only rentxp categories
+
   
       if (error) throw new Error(error.message);
       return data as Category[];
