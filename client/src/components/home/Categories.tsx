@@ -286,6 +286,128 @@
 // export default Categories;
 
 
+// import { useQuery } from "@tanstack/react-query";
+// import { Link } from "react-router-dom";
+// import { supabase } from "@/lib/supabase";
+// import { useEffect, useRef } from "react";
+
+// type Category = {
+//   id: string;
+//   name: string;
+//   image_url: string | null;
+//   parent_id: string | null;
+//   is_active: boolean;
+// };
+
+// const CategorySkeleton = () => (
+//   <div className="flex flex-col items-center space-y-2 w-24 snap-start">
+//     <div className="w-20 h-20 bg-gray-200 rounded-full animate-pulse"></div>
+//     <div className="h-4 w-14 bg-gray-200 rounded animate-pulse"></div>
+//   </div>
+// );
+
+// const Categories = () => {
+//   const sliderRef = useRef<HTMLDivElement | null>(null);
+
+//   const { data: categories = [], isLoading } = useQuery({
+//     queryKey: ["all-categories"],
+//     queryFn: async () => {
+//       const { data, error } = await supabase
+//         .from("categories")
+//         .select("id, name, image_url, parent_id, is_active")
+//         .eq("is_active", true)
+//         .is("parent_id", null)
+//         .eq("company", "rentxp"); // rentxp filter
+
+//       if (error) throw new Error(error.message);
+//       return data as Category[];
+//     },
+//     staleTime: 1000 * 60 * 60,
+//   });
+
+//   // Auto-slide logic
+//   useEffect(() => {
+//     const slider = sliderRef.current;
+//     if (!slider) return;
+
+//     let index = 0;
+
+//     const interval = setInterval(() => {
+//       const childrenCount = slider.children.length;
+//       if (childrenCount === 0) return;
+
+//       index = (index + 1) % childrenCount;
+
+//       slider.scrollTo({
+//         left: index * 110, // 110px card width
+//         behavior: "smooth",
+//       });
+//     }, 2000);
+
+//     return () => clearInterval(interval);
+//   }, []);
+
+//   return (
+//     <section className="bg-gray-50 py-12">
+//       <div className="container mx-auto px-4">
+//         <div className="flex justify-between items-center mb-6">
+//           <h2 className="text-2xl font-bold text-gray-800">Browse Categories</h2>
+//           {/* <Link to="/categories">
+//             <span className="text-primary hover:underline font-medium cursor-pointer">
+//               View All
+//             </span>
+//           </Link> */}
+//         </div>
+
+//         {/* Auto slider container */}
+//         <div
+//           ref={sliderRef}
+//           className="flex space-x-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+//         >
+//           {isLoading
+//             ? Array(6)
+//                 .fill(0)
+//                 .map((_, i) => <CategorySkeleton key={i} />)
+//             : categories.map((category) => (
+//                 <Link
+//                   key={category.id}
+//                   to={`/category/${category.id}`}
+//                   className="flex flex-col items-center space-y-2 w-24 snap-start"
+//                 >
+//                   {/* Rounded Image */}
+//                   <div className="w-20 h-20 rounded-full bg-gray-200 border overflow-hidden shadow-sm">
+//                     {category.image_url ? (
+//                       <img
+//                         src={category.image_url}
+//                         alt={category.name}
+//                         className="w-full h-full object-cover"
+//                         onError={(e) => {
+//                           (e.target as HTMLImageElement).src =
+//                             "https://via.placeholder.com/100?text=Image";
+//                         }}
+//                       />
+//                     ) : (
+//                       <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600">
+//                         <span className="text-xl font-bold">
+//                           {category.name.charAt(0)}
+//                         </span>
+//                       </div>
+//                     )}
+//                   </div>
+
+//                   <p className="text-sm font-medium text-gray-800 text-center">
+//                     {category.name}
+//                   </p>
+//                 </Link>
+//               ))}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default Categories;
+
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -300,9 +422,9 @@ type Category = {
 };
 
 const CategorySkeleton = () => (
-  <div className="flex flex-col items-center space-y-2 w-24 snap-start">
-    <div className="w-20 h-20 bg-gray-200 rounded-full animate-pulse"></div>
-    <div className="h-4 w-14 bg-gray-200 rounded animate-pulse"></div>
+  <div className="flex flex-col items-center space-y-3 w-28 snap-start">
+    <div className="w-24 h-24 bg-gray-200 rounded-full animate-pulse"></div>
+    <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
   </div>
 );
 
@@ -317,7 +439,7 @@ const Categories = () => {
         .select("id, name, image_url, parent_id, is_active")
         .eq("is_active", true)
         .is("parent_id", null)
-        .eq("company", "rentxp"); // rentxp filter
+        .eq("company", "rentxp");
 
       if (error) throw new Error(error.message);
       return data as Category[];
@@ -339,7 +461,7 @@ const Categories = () => {
       index = (index + 1) % childrenCount;
 
       slider.scrollTo({
-        left: index * 110, // 110px card width
+        left: index * 140, // bigger space for cards
         behavior: "smooth",
       });
     }, 2000);
@@ -352,18 +474,14 @@ const Categories = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Browse Categories</h2>
-          <Link to="/categories">
-            <span className="text-primary hover:underline font-medium cursor-pointer">
-              View All
-            </span>
-          </Link>
         </div>
 
         {/* Auto slider container */}
         <div
-          ref={sliderRef}
-          className="flex space-x-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
-        >
+  ref={sliderRef}
+  className="flex space-x-8 overflow-x-auto snap-x snap-mandatory pb-3 px-1"
+>
+
           {isLoading
             ? Array(6)
                 .fill(0)
@@ -372,10 +490,10 @@ const Categories = () => {
                 <Link
                   key={category.id}
                   to={`/category/${category.id}`}
-                  className="flex flex-col items-center space-y-2 w-24 snap-start"
+                  className="flex flex-col items-center space-y-3 w-28 snap-start"
                 >
                   {/* Rounded Image */}
-                  <div className="w-20 h-20 rounded-full bg-gray-200 border overflow-hidden shadow-sm">
+                  <div className="w-24 h-24 rounded-full bg-gray-200 border overflow-hidden shadow">
                     {category.image_url ? (
                       <img
                         src={category.image_url}

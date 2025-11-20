@@ -57,3 +57,37 @@
   }
 }
 
+/* Elegant Gaming Scrollbar (Light UI Friendly) */
+::-webkit-scrollbar {
+  height: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: #e5e7eb; /* light gray, clean */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #4f8cff, #8b5cf6);
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(139, 92, 246, 0.5);
+  transition: 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #ff3e9d, #ff8c42);
+  box-shadow: 0 0 10px rgba(255, 62, 157, 0.6);
+}
+
+
+/* Make scrollbar visible inside slider only */
+.gaming-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.gaming-scroll {
+  scrollbar-color: #8338ec #1a1a1a; /* Firefox */
+}
+
+
