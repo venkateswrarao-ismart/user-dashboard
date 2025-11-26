@@ -67,14 +67,11 @@ const RegisterModal = ({ isOpen, onClose, onShowLogin }: RegisterModalProps) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="text-xl font-bold text-gray-800">Create Account</DialogTitle>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onClose}>
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
+            
           </div>
           <DialogDescription>
             Create a new account to start shopping on our marketplace.
@@ -120,7 +117,7 @@ const RegisterModal = ({ isOpen, onClose, onShowLogin }: RegisterModalProps) => 
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input placeholder="johndoe" {...field} disabled={isLoading} />
+                    <Input type="tel" placeholder="+1 234 567 8900" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -201,7 +198,7 @@ const RegisterModal = ({ isOpen, onClose, onShowLogin }: RegisterModalProps) => 
           </form>
         </Form>
 
-        <div className="text-center text-gray-600">
+        <div className="text-center text-gray-600 pt-2">
           Already have an account?{" "}
           <button onClick={onShowLogin} className="text-primary hover:underline">
             Sign In

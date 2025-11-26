@@ -54,10 +54,7 @@ const LoginModal = ({ isOpen, onClose, onShowRegister }: LoginModalProps) => {
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="text-xl font-bold text-gray-800">Sign In</DialogTitle>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onClose}>
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
+           
           </div>
           <DialogDescription>
             Sign in to your account to access your profile, orders, and more.

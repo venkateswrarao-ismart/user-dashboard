@@ -195,6 +195,105 @@
 // }
 
 
+// import { useParams, useLocation } from "react-router-dom";
+// import { useQuery } from "@tanstack/react-query";
+// import { RefreshCw } from "lucide-react";
+// import { ProductCard } from "@/components/product/ProductCard";
+// import { supabase } from "@/lib/supabase";
+
+// type Product = {
+//   id: string;
+//   name: string;
+//   description: string;
+//   price: number;
+//   selling_price: number;
+//   image_url: string;
+//   category_id: string;
+//   brand?: string;
+//   product_photos?: string[];
+// };
+
+// export default function ProductList() {
+//   const { slug } = useParams<{ slug: string }>();
+//   const location = useLocation();
+//   const searchParams = new URLSearchParams(location.search);
+//   const searchQuery = searchParams.get('search')?.trim();
+
+//   const { data, isLoading, error } = useQuery({
+//     queryKey: ["products", slug, searchQuery],
+//     queryFn: async () => {
+//       let query = supabase
+//         .from("products")
+//         .select("*, product_images(*)", { count: "exact" }) .eq("company", "rentxp"); ;
+
+//       // Handle category filter
+//       if (slug) {
+//         query = query.in("category_id", [slug]);
+//       }
+
+//       // Handle search query
+//       if (searchQuery) {
+//         query = query.ilike('name', `%${searchQuery}%`);
+//       }
+
+//       const { data, error } = await query;
+
+//       if (error) {
+//         throw new Error(error.message);
+//       }
+
+//       return { products: data as Product[] };
+//     },
+//     enabled: !!slug || !!searchQuery || true // Always enabled
+//   });
+
+//   if (isLoading) {
+//     return (
+//       <div className="flex items-center justify-center min-h-screen">
+//         <RefreshCw className="h-8 w-8 text-primary animate-spin" />
+//       </div>
+//     );
+//   }
+
+
+//   console.log('produc-data-inlist',data)
+
+//   if (error) {
+//     return (
+//       <div className="text-center text-red-500 mt-8">
+//         Error loading products: {error.message}
+//       </div>
+//     );
+//   }
+
+//   const getHeaderText = () => {
+//     if (slug) return "Products in this Category";
+//     if (searchQuery) return `Search Results for "${searchQuery}"`;
+//     return "All Products";
+//   };
+
+//   return (
+//     <div className="container mx-auto px-4 py-8">
+//       <h1 className="text-2xl font-bold mb-6">{getHeaderText()}</h1>
+//       {!data?.products?.length ? (
+//         <div className="text-center mt-8">No products found</div>
+//       ) : (
+//         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+//           {data.products.map((product) => (
+//             <ProductCard
+//               key={product.id}
+//               product={{
+//                 ...product,
+//                 image_url: product.product_photos?.[0] || product.image_url
+//               }}
+//             />
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
 import { useParams, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCw } from "lucide-react";
@@ -214,21 +313,22 @@ type Product = {
 };
 
 export default function ProductList() {
-  const { slug } = useParams<{ slug: string }>();
+  const { id } = useParams<{ id: string }>(); // Changed from slug to id
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search')?.trim();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["products", slug, searchQuery],
+    queryKey: ["products", id, searchQuery],
     queryFn: async () => {
       let query = supabase
         .from("products")
-        .select("*, product_images(*)", { count: "exact" }) .eq("company", "rentxp"); ;
+        .select("*, product_images(*)", { count: "exact" })
+        .eq("company", "rentxp");
 
       // Handle category filter
-      if (slug) {
-        query = query.in("category_id", [slug]);
+      if (id) {
+        query = query.in("category_id", [id]); // Use id instead of slug
       }
 
       // Handle search query
@@ -244,7 +344,7 @@ export default function ProductList() {
 
       return { products: data as Product[] };
     },
-    enabled: !!slug || !!searchQuery || true // Always enabled
+    enabled: !!id || !!searchQuery || true // Always enabled
   });
 
   if (isLoading) {
@@ -255,8 +355,7 @@ export default function ProductList() {
     );
   }
 
-
-  console.log('produc-data-inlist',data)
+  console.log('product-data-in-list', data);
 
   if (error) {
     return (
@@ -267,7 +366,7 @@ export default function ProductList() {
   }
 
   const getHeaderText = () => {
-    if (slug) return "Products in this Category";
+    if (id) return "Products in this Category";
     if (searchQuery) return `Search Results for "${searchQuery}"`;
     return "All Products";
   };
