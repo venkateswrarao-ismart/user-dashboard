@@ -1287,7 +1287,7 @@ const Header = () => {
           <form onSubmit={handleSearch} className="relative w-full">
             <Input
               type="text"
-              placeholder="Search products, vendors..."
+              placeholder="Search Products, Consoles..."
               className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -1312,9 +1312,7 @@ const Header = () => {
               <Link to="/products" className="text-gray-600 hover:text-primary transition py-2">
                 Categories
               </Link>
-              <Link to="/products?type=vendors" className="text-gray-600 hover:text-primary transition py-2">
-                Vendors
-              </Link>
+            
               {/* WhatsApp option in mobile menu */}
               <button
                 onClick={handleWhatsAppClick}
@@ -1341,12 +1339,7 @@ const Header = () => {
                   >
                     Register
                   </button>
-                  <button
-                    onClick={openVendorRegisterModal}
-                    className="text-left text-gray-600 hover:text-primary transition py-2"
-                  >
-                    Become a Vendor
-                  </button>
+              
                 </>
               ) : (
                 <>
@@ -1359,11 +1352,7 @@ const Header = () => {
                   <Link to="/addresses" className="text-gray-600 hover:text-primary transition py-2">
                     Addresses
                   </Link>
-                  {user?.isVendor && (
-                    <Link to="/vendor/dashboard" className="text-gray-600 hover:text-primary transition py-2">
-                      Vendor Dashboard
-                    </Link>
-                  )}
+              
                   <button
                     onClick={handleLogout}
                     className="text-left text-gray-600 hover:text-primary transition py-2"
