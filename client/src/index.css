@@ -90,4 +90,20 @@
   scrollbar-color: #8338ec #1a1a1a; /* Firefox */
 }
 
+/* Add to your global CSS or App.css */
+.leaflet-container {
+  font-family: inherit;
+}
 
+.leaflet-control-zoom a {
+  color: #333 !important;
+}
+
+.leaflet-popup-content {
+  font-size: 14px;
+}
+
+/* Add this to your global CSS or component CSS */
+.leaflet-default-icon-path {
+  background-image: url(https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png);
+}

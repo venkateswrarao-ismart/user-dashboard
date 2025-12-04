@@ -154,8 +154,7 @@ import Categories from "./components/home/Categories";
 import ScrollToTop from "@/pages/ScrollToTop";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
-import Addresses from "@/pages/Addresses";
-
+import 'leaflet/dist/leaflet.css';
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
