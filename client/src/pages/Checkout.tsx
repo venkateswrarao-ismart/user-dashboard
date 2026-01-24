@@ -5692,10 +5692,10 @@ const Checkout = () => {
                         <DollarSign className="mr-2 h-4 w-4" />
                         Cash on Delivery
                       </TabsTrigger>
-                      {/* <TabsTrigger value="razorpay" className="flex items-center">
+                      <TabsTrigger value="razorpay" className="flex items-center">
                         <CreditCard className="mr-2 h-4 w-4" />
                         Razorpay
-                      </TabsTrigger> */}
+                      </TabsTrigger>
                     </TabsList>
                     <TabsContent value="cash-on-delivery" className="mt-4">
                       <div className="bg-gray-50 p-4 rounded-lg">

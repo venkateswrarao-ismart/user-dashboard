@@ -107,3 +107,28 @@
 .leaflet-default-icon-path {
   background-image: url(https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png);
 }
+
+/* For better mobile map experience */
+@media (max-width: 640px) {
+  .leaflet-control-zoom {
+    margin-bottom: 60px !important;
+  }
+  
+  .leaflet-bar a {
+    width: 40px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    font-size: 24px !important;
+  }
+}
+
+/* Prevent text selection on buttons */
+button {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Improve touch scrolling */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
